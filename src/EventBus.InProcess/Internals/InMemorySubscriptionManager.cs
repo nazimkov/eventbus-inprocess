@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EventBus.InProcess.Subscriptions
+namespace EventBus.InProcess.Internals
 {
     public sealed class InMemorySubscriptionManager : IEventBusSubscriptionManager
     {

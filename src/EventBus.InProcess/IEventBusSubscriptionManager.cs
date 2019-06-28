@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace EventBus.InProcess.Subscriptions
+namespace EventBus.InProcess
 {
     public interface IEventBusSubscriptionManager
     {
-        bool IsEmpty {get;}
+        bool IsEmpty { get; }
 
         event EventHandler<Type> OnEventRemoved;
 

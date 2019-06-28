@@ -1,15 +1,14 @@
-﻿using EventBus.InProcess.Config;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Channels;
+﻿using System;
 
 namespace EventBus.InProcess.Internals
 {
     internal class EventBusInProcess : IEventBus
     {
-        public EventBusInProcess(IEventBusConfig config)
+        private readonly IEventBusSubscriptionManager _subsManager;
+
+        public EventBusInProcess(IEventBusConfig config, IEventBusSubscriptionManager subsManager)
         {
+            _subsManager = subsManager ?? throw new ArgumentNullException(nameof(_subsManager));
         }
 
         public void Publish(IntegrationEvent @event)
