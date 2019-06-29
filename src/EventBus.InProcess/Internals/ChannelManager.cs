@@ -19,6 +19,11 @@ namespace EventBus.InProcess.Internals
         {
             var eventType = typeof(T);
 
+            if (HasChannel<T>())
+            {
+                return Get<T>();
+            }
+
             var newChannel = Channel.CreateUnbounded<T>();
 
             await Task.Factory.StartNew(async () =>
@@ -41,6 +46,8 @@ namespace EventBus.InProcess.Internals
 
             return (Channel<T>)channel;
         }
+
+        private bool HasChannel<T>() => _channels.ContainsKey(typeof(T));
 
         private async Task ReadUntilCancelledAsync<T>(ChannelReader<T> reader, Func<T, Task> receiver,
            CancellationToken cancellationToken)
