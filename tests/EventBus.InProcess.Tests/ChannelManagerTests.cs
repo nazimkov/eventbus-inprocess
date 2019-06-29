@@ -1,5 +1,8 @@
 ﻿using EventBus.InProcess.Internals;
+using System;
+using System.Threading;
 using System.Threading.Channels;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace EventBus.InProcess.Tests
@@ -7,6 +10,7 @@ namespace EventBus.InProcess.Tests
     public class ChannelManagerTests
     {
         private readonly ChannelManager _channelManager;
+        private readonly Func<ChannelMessage, Task> _dummyReceiver = _ => Task.CompletedTask;
 
         public ChannelManagerTests()
         {
@@ -14,11 +18,11 @@ namespace EventBus.InProcess.Tests
         }
 
         [Fact]
-        public void GetOrCreate_NewMessageType_CreatesAndReturnsNewChannelOfMessageType()
+        public async Task GetOrCreate_NewMessageType_CreatesAndReturnsNewChannelOfMessageTypeAsync()
         {
             // Arrange
             // Act
-            var channel = _channelManager.GetOrCreate<ChannelMessage>();
+            var channel = await _channelManager.CreateAsync(_dummyReceiver, CancellationToken.None);
 
             // Assert
             Assert.NotNull(channel);
@@ -26,13 +30,13 @@ namespace EventBus.InProcess.Tests
         }
 
         [Fact]
-        public void GetOrCreate_ExistingMessageType_ReturnsExistingChannel()
+        public async Task Get_ExistingMessageType_ReturnsExistingChannel()
         {
             // Arrange
-            var newChannel = _channelManager.GetOrCreate<ChannelMessage>();
+            var newChannel = await _channelManager.CreateAsync(_dummyReceiver, CancellationToken.None);
 
             // Act
-            var existingChannel = _channelManager.GetOrCreate<ChannelMessage>();
+            var existingChannel = _channelManager.Get<ChannelMessage>();
 
             // Assert
             Assert.True(ReferenceEquals(newChannel, existingChannel));
