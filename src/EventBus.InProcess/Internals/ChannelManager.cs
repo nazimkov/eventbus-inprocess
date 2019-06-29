@@ -12,7 +12,7 @@ namespace EventBus.InProcess.Internals
             _channels = new Dictionary<Type, object>();
         }
 
-        public Channel<T> GetOrCreateChannel<T>()
+        public Channel<T> GetOrCreate<T>()
         {
             var eventType = typeof(T);
  

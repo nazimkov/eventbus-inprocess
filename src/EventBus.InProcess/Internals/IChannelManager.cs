@@ -4,6 +4,6 @@ namespace EventBus.InProcess.Internals
 {
     public interface IChannelManager
     {
-        Channel<T> GetOrCreateChannel<T>();
+        Channel<T> GetOrCreate<T>();
     }
 }

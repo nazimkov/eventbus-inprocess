@@ -23,7 +23,7 @@ namespace EventBus.InProcess.Internals
 
         public void Publish<T>(T @event) where T : IntegrationEvent
         {
-            var channel = _channelManager.GetOrCreateChannel<T>();
+            var channel = _channelManager.GetOrCreate<T>();
             channel.Writer.WriteAsync(@event).GetAwaiter().GetResult();
         }
 
@@ -32,7 +32,9 @@ namespace EventBus.InProcess.Internals
             where TH : IIntegrationEventHandler<T>
         {
             _subsManager.AddSubscription<T, TH>();
-            var channel = _channelManager.GetOrCreateChannel<T>();
+            var channel = _channelManager.GetOrCreate<T>();
+
+
 
             throw new NotImplementedException();
         }
