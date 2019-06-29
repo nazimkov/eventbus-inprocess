@@ -107,7 +107,7 @@ namespace EventBus.InProcess.Tests
             {
                 _callback = callback;
             }
-            public Task Handle(TestEvent @event)
+            public Task HandleAsync(TestEvent @event, CancellationToken token)
             {
                 _callback.Invoke(@event);
                 return Task.CompletedTask;

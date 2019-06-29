@@ -8,7 +8,7 @@ namespace EventBus.InProcess.Internals
 {
     public class ChannelManager : IChannelManager
     {
-        private Dictionary<Type, object> _channels;
+        private readonly Dictionary<Type, object> _channels;
 
         public ChannelManager()
         {
@@ -26,9 +26,12 @@ namespace EventBus.InProcess.Internals
 
             var newChannel = Channel.CreateUnbounded<T>();
 
+            // TODO Consider to move from Task per Channel to one Channel for all events
             await Task.Factory.StartNew(async () =>
                 await ReadUntilCancelledAsync(newChannel.Reader, receiver, cancellationToken),
-                TaskCreationOptions.LongRunning).ConfigureAwait(false);
+                cancellationToken,
+                TaskCreationOptions.LongRunning,
+                TaskScheduler.Default).ConfigureAwait(false);
 
             _channels.Add(eventType, newChannel);
 
@@ -41,7 +44,7 @@ namespace EventBus.InProcess.Internals
 
             if (!_channels.TryGetValue(eventType, out object channel))
             {
-                throw new InvalidOperationException("You should create channel first");
+                throw new ArgumentException($"Channel for type {typeof(T).Name} does't exists", nameof(T));
             }
 
             return (Channel<T>)channel;
@@ -60,8 +63,7 @@ namespace EventBus.InProcess.Internals
                     await receiver(item);
                 }
             }
-            while (
-                !cancellationToken.IsCancellationRequested
+            while (!cancellationToken.IsCancellationRequested
                 && await reader.WaitToReadAsync(cancellationToken).ConfigureAwait(false));
         }
     }

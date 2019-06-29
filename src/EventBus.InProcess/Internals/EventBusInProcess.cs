@@ -65,7 +65,7 @@ namespace EventBus.InProcess.Internals
                     foreach (var hanlerType in _subsManager.GetHandlersForEvent<T>())
                     {
                         var handler = (IIntegrationEventHandler<T>)scope.ServiceProvider.GetRequiredService(hanlerType);
-                        await handler.Handle(@event);
+                        await handler.HandleAsync(@event, _cts.Token);
                     }
                 }
             }
