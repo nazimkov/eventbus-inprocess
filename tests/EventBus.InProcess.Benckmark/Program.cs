@@ -17,7 +17,15 @@ namespace EventBus.InProcess.Benckmark
             var serviceProvider = serviceCollection.BuildServiceProvider();
             serviceCollection.AddSubscription<UserInfoUpdatedEvent, UserInfoUpdatedHandler>(serviceProvider);
 
-            serviceProvider.GetService<EventBusBenchmark>().Run(Console.WriteLine);
+            var benchmark = serviceProvider.GetService<EventBusBenchmark>();
+
+            benchmark.Run(_ => { }, 100); // Warmup
+
+            foreach (var eventsNumber in new[] { 1000, 10000, 100000 })
+            {
+                benchmark.Run(Console.WriteLine, eventsNumber);
+            }
+
             Console.ReadLine();
         }
 

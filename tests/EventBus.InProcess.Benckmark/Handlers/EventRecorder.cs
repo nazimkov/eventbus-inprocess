@@ -1,25 +1,18 @@
 ﻿using System.Threading;
-using System.Threading.Tasks;
 
 namespace EventBus.InProcess.Benckmark.Handlers
 {
     public class EventRecorder
     {
-        private int _eventsHandled;
+        private int _numberHandledEvents;
 
-        public int EventsHandled
+        public int NumberHandledEvents
         {
-            get { return _eventsHandled; }
+            get { return _numberHandledEvents; }
         }
 
+        public void ResetCounter() => _numberHandledEvents = 0;
 
-        public EventRecorder()
-        {
-        }
-
-        public void EventHandled()
-        {
-            Interlocked.Increment(ref _eventsHandled);
-        }
+        public void EventHandled() => Interlocked.Increment(ref _numberHandledEvents);
     }
 }

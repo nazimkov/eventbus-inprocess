@@ -2,7 +2,6 @@
 using EventBus.InProcess.Benckmark.Handlers;
 using System;
 using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace EventBus.InProcess.Benckmark
@@ -18,14 +17,14 @@ namespace EventBus.InProcess.Benckmark
             _eventRecorder = eventRecorder;
         }
 
-        internal void Run(Action<string> writer)
+        internal void Run(Action<string> writer, int eventsNumber)
         {
-            const int runsCount = 100; 
-            var tasks = new Task[runsCount];
+            _eventRecorder.ResetCounter();
+            var tasks = new Task[eventsNumber];
 
             var watch = new Stopwatch();
             watch.Start();
-            for (var i = 0; i < runsCount; i++)
+            for (var i = 0; i < eventsNumber; i++)
             {
                 tasks[i] = Task.Run(() => _bus.Publish(new UserInfoUpdatedEvent
                 {
@@ -35,16 +34,14 @@ namespace EventBus.InProcess.Benckmark
 
             Task.WaitAll(tasks);
 
-            while(watch.ElapsedMilliseconds < 10000)
+            while (_eventRecorder.NumberHandledEvents < eventsNumber)
             {
-
             }
 
             var elapsed = watch.Elapsed;
             watch.Stop();
 
-
-            writer($"{_eventRecorder.EventsHandled} events handled in {elapsed}");
+            writer($"{_eventRecorder.NumberHandledEvents} events handled in {elapsed.TotalMilliseconds}");
         }
     }
 }
