@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.InProcess", "src\E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus.InProcess.Tests", "tests\EventBus.InProcess.Tests\EventBus.InProcess.Tests.csproj", "{76A09069-E5E8-4B3A-A160-4D833885A9F2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus.InProcess.Benckmark", "tests\EventBus.InProcess.Benckmark\EventBus.InProcess.Benckmark.csproj", "{FFF39D4B-26BA-4A95-B4ED-8512D7D862EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{76A09069-E5E8-4B3A-A160-4D833885A9F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76A09069-E5E8-4B3A-A160-4D833885A9F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76A09069-E5E8-4B3A-A160-4D833885A9F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFF39D4B-26BA-4A95-B4ED-8512D7D862EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFF39D4B-26BA-4A95-B4ED-8512D7D862EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFF39D4B-26BA-4A95-B4ED-8512D7D862EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFF39D4B-26BA-4A95-B4ED-8512D7D862EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

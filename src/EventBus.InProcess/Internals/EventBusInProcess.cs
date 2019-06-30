@@ -46,7 +46,7 @@ namespace EventBus.InProcess.Internals
             where TH : IIntegrationEventHandler<T>
         {
             _subsManager.AddSubscription<T, TH>();
-            var channel = _channelManager.CreateAsync<T>(ProcessEvent, _cts.Token).GetAwaiter().GetResult();
+            _channelManager.CreateAsync<T>(ProcessEvent, _cts.Token).GetAwaiter().GetResult();
         }
 
         public void Unsubscribe<T, TH>()

@@ -16,15 +16,11 @@ namespace EventBus.InProcess
         }
 
         public static IServiceCollection AddSubscription<T, TH>(
-            this IServiceCollection services)
+            this IServiceCollection services, IServiceProvider provider)
             where TH : class, IIntegrationEventHandler<T>
             where T : IntegrationEvent
         {
-            services.AddScoped<TH>();
-
-            var bus = services
-                .BuildServiceProvider() // TODO Rethink building service provider each time
-                .GetRequiredService<IEventBus>();
+            var bus = provider.GetRequiredService<IEventBus>();
 
             bus.Subscribe<T, TH>();
 
