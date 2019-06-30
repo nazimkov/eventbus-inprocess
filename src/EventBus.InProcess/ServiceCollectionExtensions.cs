@@ -14,17 +14,5 @@ namespace EventBus.InProcess
 
             return services;
         }
-
-        public static IServiceCollection AddSubscription<T, TH>(
-            this IServiceCollection services, IServiceProvider provider)
-            where TH : class, IIntegrationEventHandler<T>
-            where T : IntegrationEvent
-        {
-            var bus = provider.GetRequiredService<IEventBus>();
-
-            bus.Subscribe<T, TH>();
-
-            return services;
-        }
     }
 }

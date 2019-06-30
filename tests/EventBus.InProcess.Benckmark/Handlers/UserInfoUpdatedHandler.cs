@@ -19,4 +19,32 @@ namespace EventBus.InProcess.Benckmark.Handlers
             return Task.CompletedTask;
         }
     }
+
+    internal class UserInfoUpdatedHandlerOne : UserInfoUpdatedHandler
+    {
+        public UserInfoUpdatedHandlerOne(EventRecorder eventRecorder) : base(eventRecorder)
+        {
+        }
+    }
+
+    internal class UserInfoUpdatedHandlerTwo : UserInfoUpdatedHandler
+    {
+        public UserInfoUpdatedHandlerTwo(EventRecorder eventRecorder) : base(eventRecorder)
+        {
+        }
+    }
+
+    internal class UserInfoUpdatedHandlerThree : UserInfoUpdatedHandler
+    {
+        public UserInfoUpdatedHandlerThree(EventRecorder eventRecorder) : base(eventRecorder)
+        {
+        }
+    }
+
+    internal class UserInfoUpdatedHandlerFour : UserInfoUpdatedHandler
+    {
+        public UserInfoUpdatedHandlerFour(EventRecorder eventRecorder) : base(eventRecorder)
+        {
+        }
+    }
 }

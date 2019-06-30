@@ -5,7 +5,7 @@ using System;
 
 namespace EventBus.InProcess.Benckmark
 {
-    class Program
+    internal static class Program
     {
         static void Main(string[] args)
         {
@@ -14,19 +14,45 @@ namespace EventBus.InProcess.Benckmark
 
             // create service provider
             serviceCollection.AddScoped<UserInfoUpdatedHandler>();
+            serviceCollection.AddScoped<UserInfoUpdatedHandlerOne>();
+            serviceCollection.AddScoped<UserInfoUpdatedHandlerTwo>();
+            serviceCollection.AddScoped<UserInfoUpdatedHandlerThree>();
+            serviceCollection.AddScoped<UserInfoUpdatedHandlerFour>();
+
             var serviceProvider = serviceCollection.BuildServiceProvider();
-            serviceCollection.AddSubscription<UserInfoUpdatedEvent, UserInfoUpdatedHandler>(serviceProvider);
+            var bus = serviceProvider.GetRequiredService<IEventBus>();
+            bus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandler>();
 
             var benchmark = serviceProvider.GetService<EventBusBenchmark>();
 
+            RunBenchmark(benchmark, "One subscriber");
+
+
+            var multiSubsProvider = serviceCollection.BuildServiceProvider();
+            var multiSubsBus = serviceProvider.GetRequiredService<IEventBus>();
+
+            //multiSubsBus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandler>();
+            multiSubsBus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandlerOne>();
+            multiSubsBus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandlerTwo>();
+            multiSubsBus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandlerThree>();
+            multiSubsBus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandlerFour>();
+
+            var multiSubsBenchmark = multiSubsProvider.GetService<EventBusBenchmark>();
+
+            RunBenchmark(multiSubsBenchmark, "Five subscribers");
+
+            Console.ReadLine();
+        }
+
+        private static void RunBenchmark(EventBusBenchmark benchmark, string name)
+        {
+            Console.WriteLine($"=== Running {name} benchmark ===");
             benchmark.Run(_ => { }, 100); // Warmup
 
-            foreach (var eventsNumber in new[] { 1000, 10000, 100000 })
+            foreach (var eventsNumber in new[] { 1000, 10000, 100000, 1000000 })
             {
                 benchmark.Run(Console.WriteLine, eventsNumber);
             }
-
-            Console.ReadLine();
         }
 
         private static void ConfigureServices(IServiceCollection services)
