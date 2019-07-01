@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EventBus.InProcess.Internals
 {
-    internal class EventBusInProcess : IEventBus, IDisposable
+    internal class EventBusInProcess : IEventBus
     {
         private readonly IEventBusSubscriptionManager _subsManager;
         private readonly IChannelManager _channelManager;
@@ -82,6 +82,7 @@ namespace EventBus.InProcess.Internals
                 if (disposing)
                 {
                     _cts.Cancel();
+                    _channelManager.Dispose();
                 }
 
                 disposedValue = true;

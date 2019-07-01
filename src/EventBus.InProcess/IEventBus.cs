@@ -1,6 +1,8 @@
-﻿namespace EventBus.InProcess
+﻿using System;
+
+namespace EventBus.InProcess
 {
-    public interface IEventBus
+    public interface IEventBus : IDisposable
     {
         void Publish<T>(T @event)
             where T : IntegrationEvent;
