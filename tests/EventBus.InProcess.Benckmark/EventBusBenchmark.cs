@@ -17,7 +17,7 @@ namespace EventBus.InProcess.Benckmark
             _eventRecorder = eventRecorder;
         }
 
-        internal void Run(Action<string> writer, int eventsNumber)
+        internal void Run(Action<string> writer, int eventsNumber, int subsNumber)
         {
             _eventRecorder.ResetCounter();
             var tasks = new Task[eventsNumber];
@@ -34,7 +34,8 @@ namespace EventBus.InProcess.Benckmark
 
             Task.WaitAll(tasks);
 
-            while (_eventRecorder.NumberHandledEvents < eventsNumber)
+            var handledEventsNumber = eventsNumber * subsNumber;
+            while (_eventRecorder.NumberHandledEvents < handledEventsNumber)
             {
             }
 

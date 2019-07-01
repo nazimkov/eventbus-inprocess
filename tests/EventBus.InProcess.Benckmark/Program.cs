@@ -25,13 +25,14 @@ namespace EventBus.InProcess.Benckmark
 
             var benchmark = serviceProvider.GetService<EventBusBenchmark>();
 
-            RunBenchmark(benchmark, "One subscriber");
+            RunBenchmark(benchmark, 1, "One subscriber");
+            bus.Dispose();
 
 
             var multiSubsProvider = serviceCollection.BuildServiceProvider();
-            var multiSubsBus = serviceProvider.GetRequiredService<IEventBus>();
+            var multiSubsBus = multiSubsProvider.GetRequiredService<IEventBus>();
 
-            //multiSubsBus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandler>();
+            multiSubsBus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandler>();
             multiSubsBus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandlerOne>();
             multiSubsBus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandlerTwo>();
             multiSubsBus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandlerThree>();
@@ -39,19 +40,19 @@ namespace EventBus.InProcess.Benckmark
 
             var multiSubsBenchmark = multiSubsProvider.GetService<EventBusBenchmark>();
 
-            RunBenchmark(multiSubsBenchmark, "Five subscribers");
+            RunBenchmark(multiSubsBenchmark, 5, "Five subscribers");
 
             Console.ReadLine();
         }
 
-        private static void RunBenchmark(EventBusBenchmark benchmark, string name)
+        private static void RunBenchmark(EventBusBenchmark benchmark, int subsNumber, string name)
         {
             Console.WriteLine($"=== Running {name} benchmark ===");
-            benchmark.Run(_ => { }, 100); // Warmup
+            benchmark.Run(_ => { }, 100, subsNumber); // Warmup
 
             foreach (var eventsNumber in new[] { 1000, 10000, 100000, 1000000 })
             {
-                benchmark.Run(Console.WriteLine, eventsNumber);
+                benchmark.Run(Console.WriteLine, eventsNumber, subsNumber);
             }
         }
 
