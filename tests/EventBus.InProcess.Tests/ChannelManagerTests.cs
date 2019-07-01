@@ -18,7 +18,7 @@ namespace EventBus.InProcess.Tests
         }
 
         [Fact]
-        public async Task GetOrCreate_NewMessageType_CreatesAndReturnsNewChannelOfMessageTypeAsync()
+        public async Task Create_NewMessageType_CreatesAndReturnsNewChannelOfMessageTypeAsync()
         {
             // Arrange
             // Act
@@ -27,6 +27,18 @@ namespace EventBus.InProcess.Tests
             // Assert
             Assert.NotNull(channel);
             Assert.True(channel is Channel<ChannelMessage>);
+        }
+
+        [Fact]
+        public async Task Create__ExistingMessageType_ReturnsExistingChannel()
+        {
+            var newChannel = await _channelManager.CreateAsync(_dummyReceiver, CancellationToken.None);
+
+            // Act
+            var existingChannel = _channelManager.Get<ChannelMessage>();
+
+            // Assert
+            Assert.True(ReferenceEquals(newChannel, existingChannel));
         }
 
         [Fact]
@@ -40,6 +52,14 @@ namespace EventBus.InProcess.Tests
 
             // Assert
             Assert.True(ReferenceEquals(newChannel, existingChannel));
+        }
+
+        [Fact]
+        public void Get_NonExistingType_ThrowsArgumentException()
+        {
+            // Act
+            // Assert
+            Assert.Throws<ArgumentException>(() => _channelManager.Get<TheoryAttribute>());
         }
 
         internal class ChannelMessage
