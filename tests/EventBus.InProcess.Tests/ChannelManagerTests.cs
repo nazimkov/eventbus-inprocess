@@ -18,7 +18,7 @@ namespace EventBus.InProcess.Tests
         }
 
         [Fact]
-        public async Task Create_NewMessageType_CreatesAndReturnsNewChannelOfMessageTypeAsync()
+        public async Task Create_NewMessageType_CreatesAndReturnsNewChannelOfMessageType()
         {
             // Arrange
             // Act
@@ -30,7 +30,7 @@ namespace EventBus.InProcess.Tests
         }
 
         [Fact]
-        public async Task Create__ExistingMessageType_ReturnsExistingChannel()
+        public async Task Create_ExistingMessageType_ReturnsExistingChannel()
         {
             var newChannel = await _channelManager.CreateAsync(_dummyReceiver, CancellationToken.None);
 
