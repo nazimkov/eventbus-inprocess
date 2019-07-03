@@ -18,7 +18,7 @@ namespace EventBus.InProcess.Tests
         }
 
         [Fact]
-        public async Task Create_NewMessageType_CreatesAndReturnsNewChannelOfMessageType()
+        public async Task CreateAsync_NewMessageType_CreatesAndReturnsNewChannelOfMessageType()
         {
             // Arrange
             // Act
@@ -30,8 +30,9 @@ namespace EventBus.InProcess.Tests
         }
 
         [Fact]
-        public async Task Create_ExistingMessageType_ReturnsExistingChannel()
+        public async Task CreateAsync_ExistingMessageType_ReturnsExistingChannel()
         {
+            // Arrange
             var newChannel = await _channelManager.CreateAsync(_dummyReceiver, CancellationToken.None);
 
             // Act
@@ -39,6 +40,22 @@ namespace EventBus.InProcess.Tests
 
             // Assert
             Assert.True(ReferenceEquals(newChannel, existingChannel));
+        }
+
+        [Fact]
+        public async Task CreateAsync_NewMessageType_TaskWithReadUntilStarted()
+        {
+            // Arrange
+            var pause = new ManualResetEvent(false);
+            Func<ChannelMessage, Task> callback = _ => { pause.Set(); return Task.CompletedTask; };
+            var newChannel = await _channelManager.CreateAsync(callback, CancellationToken.None);
+
+            // Act
+            await newChannel.Writer.WriteAsync(new ChannelMessage());
+
+            //Assert
+            Assert.True(pause.WaitOne(100));
+
         }
 
         [Fact]
