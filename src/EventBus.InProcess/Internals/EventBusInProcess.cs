@@ -20,8 +20,8 @@ namespace EventBus.InProcess.Internals
             IChannelManager channelManager,
             IServiceScopeFactory scopeFactory)
         {
-            _subsManager = subsManager ?? new InMemorySubscriptionManager();
-            _channelManager = channelManager ?? new ChannelManager();
+            _subsManager = subsManager ?? throw new ArgumentNullException(nameof(subsManager));
+            _channelManager = channelManager ?? throw new ArgumentNullException(nameof(subsManager));
             _scopeFactory = scopeFactory ?? throw new ArgumentNullException(nameof(scopeFactory));
             _cts = new CancellationTokenSource();
         }

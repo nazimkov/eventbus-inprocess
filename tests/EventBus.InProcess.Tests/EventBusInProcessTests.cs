@@ -73,8 +73,9 @@ namespace EventBus.InProcess.Tests
         private static EventBusInProcess BuildBus(Dictionary<Type, object> services)
         {
             var scopeFactory = ServiceScopeFactoryMock.GetMock(services);
-            var bus = new EventBusInProcess(null, null, scopeFactory.Object);
-            return bus;
+            var channelManager = new ChannelManager();
+            var subsManager = new InMemorySubscriptionManager();
+            return new EventBusInProcess(subsManager, channelManager, scopeFactory.Object);
         }
 
         private void AssertEventReceived(ManualResetEvent resetEvent)
