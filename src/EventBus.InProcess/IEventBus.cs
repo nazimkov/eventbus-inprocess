@@ -1,10 +1,17 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EventBus.InProcess
 {
     public interface IEventBus : IDisposable
     {
         void Publish<T>(T @event)
+            where T : IntegrationEvent;
+
+        Task PublishAsync<T>(
+            T @event,
+            CancellationToken cancellationToken = default)
             where T : IntegrationEvent;
 
         void Subscribe<T, TH>()

@@ -34,7 +34,7 @@ namespace EventBus.InProcess.Internals
 
         public async Task PublishAsync<T>(
             T @event,
-            CancellationToken cancellationToken = default(CancellationToken))
+            CancellationToken cancellationToken = default)
             where T : IntegrationEvent
         {
             var channel = _channelManager.Get<T>();
