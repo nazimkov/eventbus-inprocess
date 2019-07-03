@@ -31,7 +31,7 @@ namespace EventBus.InProcess.Internals
 
             // TODO Consider to move from Task per Channel to one Channel for all events
             await Task.Factory.StartNew(async () =>
-                await ReadUntilCancelledAsync(newChannel.Reader, receiver, linkedCts.Token),
+                await newChannel.Reader.ReadUntilCancelledAsync(receiver, linkedCts.Token),
                 linkedCts.Token,
                 TaskCreationOptions.LongRunning,
                 TaskScheduler.Default).ConfigureAwait(false);
@@ -73,21 +73,6 @@ namespace EventBus.InProcess.Internals
         }
 
         private bool HasChannel<T>() => _channels.ContainsKey(typeof(T));
-
-        private async Task ReadUntilCancelledAsync<T>(ChannelReader<T> reader, Func<T, Task> receiver,
-           CancellationToken cancellationToken)
-        {
-            do
-            {
-                while (!cancellationToken.IsCancellationRequested
-                    && reader.TryRead(out var item))
-                {
-                    await receiver(item);
-                }
-            }
-            while (!cancellationToken.IsCancellationRequested
-                && await reader.WaitToReadAsync(cancellationToken).ConfigureAwait(false));
-        }
 
         #region IDisposable Support
 
