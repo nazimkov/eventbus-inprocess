@@ -17,7 +17,7 @@ namespace EventBus.InProcess.Internals
             _internalCts = new CancellationTokenSource();
         }
 
-        public async Task<Channel<T>> CreateAsync<T>(Func<T, Task> receiver, CancellationToken cancellationToken)
+        public async Task<Channel<T>> CreateAsync<T>(Func<T, ValueTask> receiver, CancellationToken cancellationToken)
         {
             var eventType = typeof(T);
 
@@ -30,7 +30,7 @@ namespace EventBus.InProcess.Internals
             var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _internalCts.Token);
 
             // TODO Consider to move from Task per Channel to one Channel for all events
-            await Task.Factory.StartNew(async () =>
+            await Task.Factory.StartNew(async() =>
                 await newChannel.Reader.ReadUntilCancelledAsync(receiver, linkedCts.Token),
                 linkedCts.Token,
                 TaskCreationOptions.LongRunning,
@@ -43,16 +43,16 @@ namespace EventBus.InProcess.Internals
 
         public Channel<T> Get<T>()
         {
-            var (channel, _) = GetChannelWithCts<T>();
+            var(channel, _) = GetChannelWithCts<T>();
 
             return (Channel<T>)channel;
         }
 
         public void DisposeChannel<T>()
         {
-            var (_, cts) = GetChannelWithCts<T>();
+            var(_, cts) = GetChannelWithCts<T>();
 
-            using (cts) // Dispose linked CTS
+            using(cts) // Dispose linked CTS
             {
                 cts.Cancel();
             }
@@ -60,13 +60,13 @@ namespace EventBus.InProcess.Internals
             _channels.Remove(typeof(T));
         }
 
-        private (object, CancellationTokenSource) GetChannelWithCts<T>()
+        private(object, CancellationTokenSource)GetChannelWithCts<T>()
         {
             var eventType = typeof(T);
 
             if (!_channels.TryGetValue(eventType, out var channelWithCts))
             {
-                throw new ArgumentException($"Channel for type {typeof(T).Name} does't exists", nameof(T));
+                throw new ArgumentException($"Channel for type {typeof(T).Name} doesn't exists", nameof(T));
             }
 
             return channelWithCts;
@@ -74,7 +74,7 @@ namespace EventBus.InProcess.Internals
 
         private bool HasChannel<T>() => _channels.ContainsKey(typeof(T));
 
-        #region IDisposable Support
+#region IDisposable Support
 
         private bool disposedValue = false; // To detect redundant calls
 
@@ -99,6 +99,6 @@ namespace EventBus.InProcess.Internals
             Dispose(true);
         }
 
-        #endregion IDisposable Support
+#endregion IDisposable Support
     }
 }

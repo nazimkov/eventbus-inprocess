@@ -7,7 +7,7 @@ namespace EventBus.InProcess.Internals
 {
     public interface IChannelManager : IDisposable
     {
-        Task<Channel<T>> CreateAsync<T>(Func<T, Task> receiver, CancellationToken cancellationToken);
+        Task<Channel<T>> CreateAsync<T>(Func<T, ValueTask> receiver, CancellationToken cancellationToken);
         Channel<T> Get<T>();
         void DisposeChannel<T>();
     }

@@ -1,8 +1,8 @@
-﻿using EventBus.InProcess.Internals;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using EventBus.InProcess.Internals;
 using Xunit;
 
 namespace EventBus.InProcess.Tests
@@ -10,7 +10,7 @@ namespace EventBus.InProcess.Tests
     public class ChannelManagerTests
     {
         private readonly ChannelManager _channelManager;
-        private readonly Func<ChannelMessage, Task> _dummyReceiver = _ => Task.CompletedTask;
+        private readonly Func<ChannelMessage, ValueTask> _dummyReceiver = _ => new ValueTask();
 
         public ChannelManagerTests()
         {
@@ -47,7 +47,11 @@ namespace EventBus.InProcess.Tests
         {
             // Arrange
             var pause = new ManualResetEvent(false);
-            Func<ChannelMessage, Task> callback = _ => { pause.Set(); return Task.CompletedTask; };
+            Func<ChannelMessage, ValueTask> callback = _ =>
+            {
+                pause.Set();
+                return new ValueTask();
+            };
             var newChannel = await _channelManager.CreateAsync(callback, CancellationToken.None);
 
             // Act
@@ -80,7 +84,6 @@ namespace EventBus.InProcess.Tests
         }
 
         internal class ChannelMessage
-        {
-        }
+        { }
     }
 }
