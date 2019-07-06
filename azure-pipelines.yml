@@ -24,23 +24,18 @@ steps:
     projects: '$(solution)'
     arguments: '--configuration $(buildConfiguration)'
 
-- script: |
-    mkdir $(Build.SourcesDirectory)\results
-    dotnet test $(tests) --logger trx /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
-    copy $(Build.SourcesDirectory)\$(projectName)\coverage.cobertura.xml $(Build.SourcesDirectory)\results
-    dotnet tool install dotnet-reportgenerator-globaltool --tool-path . --version 4.0.0-rc4
-    .\reportgenerator "-reports:$(Build.SourcesDirectory)\$projectName\coverage.cobertura.xml" "-targetdir:results" "-reporttypes:HTMLInline;HTMLChart"
-  displayName: 'Unit testing'
-
-- task: PublishTestResults@2
+- task: DotNetCoreCLI@2
   inputs:
-    testRunner: xUnit
-    testResultsFiles: '**/*.trx'
+    command: 'test'
+    projects: '**/[Tt]/*.csproj'
+    arguments: '--configuration $(buildConfiguration) /p:CollectCoverage=true 
+    /p:CoverletOputFormat=cobertura 
+    /p:CoverletOutput=$(Build.SourcesDirectory)\TestResults\Coverage\'
+
 
 - task: PublishCodeCoverageResults@1
   inputs:
-    summaryFileLocation: $(Build.SourcesDirectory)\results\coverage.cobertura.xml
-    reportDirectory: $(Build.SourcesDirectory)\results
-    codecoverageTool: cobertura
-
+    summaryFileLocation: '$(Build.SourcesDirectory)/TestResults/Coverage/*cobertura.xml'
+    reportDirectory: '$(Build.SourcesDirectory)/TestResults/Coverage'
+    codecoverageTool: 'cobertura'
 
