@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace EventBus.InProcess.Benckmark
 {
-    internal class EventBusBenchmark
+    internal class EventBusPoorManBenchmark
     {
         private readonly IEventBus _bus;
         private readonly EventRecorder _eventRecorder;
 
-        public EventBusBenchmark(IEventBus bus, EventRecorder eventRecorder)
+        public EventBusPoorManBenchmark(IEventBus bus, EventRecorder eventRecorder)
         {
             _bus = bus;
             _eventRecorder = eventRecorder;
