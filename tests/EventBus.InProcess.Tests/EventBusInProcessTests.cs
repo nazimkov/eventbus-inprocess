@@ -10,7 +10,6 @@ namespace EventBus.InProcess.Tests
 {
     public class EventBusInProcessTests
     {
-
         [Fact]
         public async Task PublishAsync_EventWithHandler_HandlerReceivesEvent()
         {
@@ -30,7 +29,6 @@ namespace EventBus.InProcess.Tests
             // Act
             bus.Subscribe<TestEvent, TestEventHandler>();
             await bus.PublishAsync(sendedEvent);
-
 
             // Assert
             Assert.True(pause.WaitOne(100));
@@ -61,7 +59,6 @@ namespace EventBus.InProcess.Tests
             bus.Subscribe<TestEvent, TestEventHandler>();
             bus.Subscribe<TestEvent, SecondTestEventHandler>();
             await bus.PublishAsync(sendedEvent);
-
 
             // Assert
             AssertEventReceived(pauseFirst);
@@ -108,6 +105,7 @@ namespace EventBus.InProcess.Tests
             {
                 _callback = callback;
             }
+
             public Task HandleAsync(TestEvent @event, CancellationToken token)
             {
                 _callback.Invoke(@event);

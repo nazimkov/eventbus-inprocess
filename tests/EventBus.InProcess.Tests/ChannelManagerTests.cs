@@ -1,8 +1,8 @@
-﻿using System;
+﻿using EventBus.InProcess.Internals;
+using System;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
-using EventBus.InProcess.Internals;
 using Xunit;
 
 namespace EventBus.InProcess.Tests
@@ -59,7 +59,6 @@ namespace EventBus.InProcess.Tests
 
             //Assert
             Assert.True(pause.WaitOne(100));
-
         }
 
         [Fact]
