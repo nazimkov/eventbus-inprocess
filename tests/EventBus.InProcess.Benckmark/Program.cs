@@ -1,4 +1,5 @@
-﻿using EventBus.InProcess.Benckmark.Events;
+﻿using BenchmarkDotNet.Running;
+using EventBus.InProcess.Benckmark.Events;
 using EventBus.InProcess.Benckmark.Handlers;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -8,6 +9,11 @@ namespace EventBus.InProcess.Benckmark
     internal static class Program
     {
         static void Main(string[] args)
+        {
+            BenchmarkRunner.Run<EventBusInProcessBenchmark>();
+        }
+
+        private static void RunPoorManBenchMark()
         {
             var serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
@@ -23,7 +29,7 @@ namespace EventBus.InProcess.Benckmark
             var bus = serviceProvider.GetRequiredService<IEventBus>();
             bus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandler>();
 
-            var benchmark = serviceProvider.GetService<EventBusBenchmark>();
+            var benchmark = serviceProvider.GetService<EventBusPoorManBenchmark>();
 
             RunBenchmark(benchmark, 1, "One subscriber");
             bus.Dispose();
@@ -38,14 +44,12 @@ namespace EventBus.InProcess.Benckmark
             multiSubsBus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandlerThree>();
             multiSubsBus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandlerFour>();
 
-            var multiSubsBenchmark = multiSubsProvider.GetService<EventBusBenchmark>();
+            var multiSubsBenchmark = multiSubsProvider.GetService<EventBusPoorManBenchmark>();
 
             RunBenchmark(multiSubsBenchmark, 5, "Five subscribers");
-
-            Console.ReadLine();
         }
 
-        private static void RunBenchmark(EventBusBenchmark benchmark, int subsNumber, string name)
+        private static void RunBenchmark(EventBusPoorManBenchmark benchmark, int subsNumber, string name)
         {
             Console.WriteLine($"=== Running {name} benchmark ===");
             benchmark.Run(_ => { }, 100, subsNumber); // Warmup
@@ -59,7 +63,7 @@ namespace EventBus.InProcess.Benckmark
         private static void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<EventRecorder>();
-            services.AddTransient<EventBusBenchmark>();
+            services.AddTransient<EventBusPoorManBenchmark>();
             services.AddEventBus();
         }
     }
