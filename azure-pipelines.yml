@@ -25,13 +25,15 @@ steps:
     arguments: '--configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
+  displayName: 'Unit testing'
   inputs:
     command: 'test'
-    projects: '**/[Tt]/*.csproj'
+    projects: '$(tests)'
     arguments: '--configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOputFormat=cobertura /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
 
 
 - task: PublishCodeCoverageResults@1
+  displayName: 'Publish coverage'
   inputs:
     summaryFileLocation: '$(Build.SourcesDirectory)/TestResults/Coverage/*cobertura.xml'
     reportDirectory: '$(Build.SourcesDirectory)/TestResults/Coverage'
