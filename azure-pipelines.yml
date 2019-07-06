@@ -14,6 +14,7 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   tests: './tests/EventBus.InProcess.Tests/EventBus.InProcess.Tests.csproj'
+  projectName: 'EventBus.InProcess'
 
 steps:
 - task: DotNetCoreCLI@2
@@ -23,11 +24,23 @@ steps:
     projects: '$(solution)'
     arguments: '--configuration $(buildConfiguration)'
 
-- task: DotNetCoreCLI@2
+- script: |
+    mkdir $(Build.SourcesDirectory)\results
+    dotnet test $(tests) --logger trx /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura  $(tests)
+    copy $(Build.SourcesDirectory)\$(projectName)\coverage.cobertura.xml $(Build.SourcesDirectory)\results
+    dotnet tool install dotnet-reportgenerator-globaltool --tool-path . --version 4.0.0-rc4
+    .\reportgenerator "-reports:$(Build.SourcesDirectory)\$projectName\coverage.cobertura.xml" "-targetdir:results" "-reporttypes:HTMLInline;HTMLChart"
+  displayName: 'Unit testing'
+
+- task: PublishTestResults@2
   inputs:
-    command: 'test'
-    projects: '$(tests)'
-    arguments: '-c $(buildConfiguration)'
-    testRunTitle: 'InProcess unit-tests'
+    testRunner: xUnit
+    testResultsFiles: '**/*.trx'
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+    summaryFileLocation: $(Build.SourcesDirectory)\results\coverage.cobertura.xml
+    reportDirectory: $(Build.SourcesDirectory)\results
+    codecoverageTool: cobertura
 
 
