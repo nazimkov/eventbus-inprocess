@@ -2,28 +2,22 @@
 using BenchmarkDotNet.Engines;
 using EventBus.InProcess.Benckmark.Events;
 using EventBus.InProcess.Benckmark.Handlers;
-using EventBus.InProcess.Internals;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Threading.Tasks;
 
 namespace EventBus.InProcess.Benckmark
 {
     [SimpleJob(RunStrategy.Monitoring, launchCount: 3, warmupCount: 5, targetCount: 50)]
     [RPlotExporter, RankColumn]
-    public class EventBusInProcessBenchmark
+    public sealed class EventBusInProcessBenchmark
     {
         private EventRecorder _eventRecorder;
         private Task[] _pulishTasks;
         private IEventBus _bus;
 
-        [Params(100, 10000)]
+        [Params(100, 10000, 1_000_000)]
         public int MessageQty;
 
-        public const int OneSub = 1;
-        public const int FiveSubs = 5;
-
-        [Params(OneSub, FiveSubs)]
+        [Params(1, 5)]
         public int SubsQty;
 
         [GlobalSetup]
@@ -31,7 +25,8 @@ namespace EventBus.InProcess.Benckmark
         {
             _eventRecorder = new EventRecorder();
             _pulishTasks = new Task[MessageQty];
-            _bus = SetupEventBus();
+            var busFactory = new EvendBusDIFactory();
+            _bus = busFactory.GetBus(SubsQty);
         }
 
         [GlobalCleanup]
@@ -59,71 +54,6 @@ namespace EventBus.InProcess.Benckmark
             {
             }
             return _eventRecorder.NumberHandledEvents;
-        }
-
-        private IEventBus SetupEventBus()
-        {
-            var serviceCollection = new ServiceCollection();
-            ConfigureServices(serviceCollection);
-            var serviceProvider = serviceCollection.BuildServiceProvider();
-            var bus = serviceProvider.GetRequiredService<IEventBus>();
-            AddSubsctibers(bus);
-            return bus;
-        }
-
-        private void ConfigureServices(IServiceCollection services)
-        {
-            services.AddSingleton(_ => _eventRecorder);
-            services.AddSingleton<IChannelManager,ChannelManager>();
-            services.AddSingleton<IEventBusSubscriptionManager ,InMemorySubscriptionManager>();
-            services.AddEventBus();
-            RegisterHandlers(services);
-        }
-
-        private void RegisterHandlers(IServiceCollection services)
-        {
-            switch (SubsQty)
-            {
-                case OneSub:
-                    {
-                        services.AddScoped<UserInfoUpdatedHandler>();
-                        break;
-                    }
-                case FiveSubs:
-                    {
-                        services.AddScoped<UserInfoUpdatedHandler>();
-                        services.AddScoped<UserInfoUpdatedHandlerOne>();
-                        services.AddScoped<UserInfoUpdatedHandlerTwo>();
-                        services.AddScoped<UserInfoUpdatedHandlerThree>();
-                        services.AddScoped<UserInfoUpdatedHandlerFour>();
-                        break;
-                    }
-                default:
-                    throw new IndexOutOfRangeException(nameof(SubsQty));
-            }
-        }
-
-        private void AddSubsctibers(IEventBus bus)
-        {
-            switch (SubsQty)
-            {
-                case OneSub:
-                    {
-                        bus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandler>();
-                        break;
-                    }
-                case FiveSubs:
-                    {
-                        bus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandler>();
-                        bus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandlerOne>();
-                        bus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandlerTwo>();
-                        bus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandlerThree>();
-                        bus.Subscribe<UserInfoUpdatedEvent, UserInfoUpdatedHandlerFour>();
-                        break;
-                    }
-                default:
-                    throw new IndexOutOfRangeException(nameof(SubsQty));
-            }
         }
     }
 }

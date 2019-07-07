@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventBus.InProcess.Benckmark
 {
-    internal class EventBusPoorManBenchmark
+    internal sealed class EventBusPoorManBenchmark
     {
         private readonly IEventBus _bus;
         private readonly EventRecorder _eventRecorder;
