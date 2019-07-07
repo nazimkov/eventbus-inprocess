@@ -17,7 +17,7 @@ namespace EventBus.InProcess.Benchmark
         private static void SetupAndRun(int subsQty)
         {
             var busFactory = new EvendBusDIFactory();
-            var bus = busFactory.GetBus(subsQuantity: 1);
+            var bus = busFactory.GetBus(subsQty);
             var eventRecorder = busFactory.ServiceProvider.GetRequiredService<EventRecorder>();
             var benchmark = new EventBusPoorManBenchmark(bus, eventRecorder);
 
