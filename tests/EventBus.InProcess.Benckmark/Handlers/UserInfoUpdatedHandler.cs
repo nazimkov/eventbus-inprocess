@@ -1,8 +1,8 @@
-﻿using EventBus.InProcess.Benckmark.Events;
+﻿using EventBus.InProcess.Benchmark.Events;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EventBus.InProcess.Benckmark.Handlers
+namespace EventBus.InProcess.Benchmark.Handlers
 {
     internal class UserInfoUpdatedHandler : IIntegrationEventHandler<UserInfoUpdatedEvent>
     {

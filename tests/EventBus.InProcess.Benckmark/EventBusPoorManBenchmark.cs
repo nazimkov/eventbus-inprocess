@@ -1,17 +1,17 @@
-﻿using EventBus.InProcess.Benckmark.Events;
-using EventBus.InProcess.Benckmark.Handlers;
+﻿using EventBus.InProcess.Benchmark.Events;
+using EventBus.InProcess.Benchmark.Handlers;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace EventBus.InProcess.Benckmark
+namespace EventBus.InProcess.Benchmark
 {
-    internal class EventBusBenchmark
+    internal sealed class EventBusPoorManBenchmark
     {
         private readonly IEventBus _bus;
         private readonly EventRecorder _eventRecorder;
 
-        public EventBusBenchmark(IEventBus bus, EventRecorder eventRecorder)
+        public EventBusPoorManBenchmark(IEventBus bus, EventRecorder eventRecorder)
         {
             _bus = bus;
             _eventRecorder = eventRecorder;
