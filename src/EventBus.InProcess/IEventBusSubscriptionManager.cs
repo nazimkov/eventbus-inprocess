@@ -7,7 +7,7 @@ namespace EventBus.InProcess
     {
         bool IsEmpty { get; }
 
-        event EventHandler<Type> OnEventRemoved;
+        event EventHandler<EventRemovedArgs> OnEventRemoved;
 
         void AddSubscription<T, TH>()
            where T : IntegrationEvent

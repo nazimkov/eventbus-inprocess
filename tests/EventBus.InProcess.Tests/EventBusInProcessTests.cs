@@ -1,4 +1,5 @@
 using EventBus.InProcess.Internals;
+using EventBus.InProcess.Tests.Data;
 using EventBus.InProcess.Tests.Mocks;
 using System;
 using System.Collections.Generic;
@@ -84,33 +85,6 @@ namespace EventBus.InProcess.Tests
         {
             Assert.Equal(expected.Id, given.Id);
             Assert.Equal(expected.CreationDate, given.CreationDate);
-        }
-
-        internal class TestEvent : IntegrationEvent
-        {
-        }
-
-        internal class SecondTestEventHandler : TestEventHandler
-        {
-            public SecondTestEventHandler(Action<TestEvent> callback) : base(callback)
-            {
-            }
-        }
-
-        internal class TestEventHandler : IIntegrationEventHandler<TestEvent>
-        {
-            private readonly Action<TestEvent> _callback;
-
-            public TestEventHandler(Action<TestEvent> callback)
-            {
-                _callback = callback;
-            }
-
-            public Task HandleAsync(TestEvent @event, CancellationToken token)
-            {
-                _callback.Invoke(@event);
-                return Task.CompletedTask;
-            }
         }
     }
 }

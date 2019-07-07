@@ -8,7 +8,7 @@ namespace EventBus.InProcess.Internals
     {
         private readonly Dictionary<Type, List<Type>> _handlers;
 
-        public event EventHandler<Type> OnEventRemoved;
+        public event EventHandler<EventRemovedArgs> OnEventRemoved;
 
         public InMemorySubscriptionManager()
         {
@@ -35,14 +35,12 @@ namespace EventBus.InProcess.Internals
             _handlers[eventType].Add(handlerType);
         }
 
-        public bool IsEmpty => _handlers.Keys.Any();
+        public bool IsEmpty => _handlers.Keys.Count == 0;
 
         public void Clear()
         {
             _handlers.Clear();
         }
-
-        public bool HasSubscriptionsForEvent(Type eventType) => _handlers.ContainsKey(eventType);
 
         public void RemoveSubscription<T, TH>()
             where T : IntegrationEvent
@@ -50,26 +48,39 @@ namespace EventBus.InProcess.Internals
         {
             var subsToRemove = typeof(TH);
             var eventType = typeof(T);
-            if (subsToRemove != null)
+            if (!HasSubscription(eventType, subsToRemove))
             {
-                _handlers[eventType].Remove(subsToRemove);
-                if (_handlers[eventType].Any())
-                {
-                    _handlers.Remove(eventType);
+                return;
+            }
 
-                    RaiseOnEventRemoved(eventType);
-                }
+            _handlers[eventType].Remove(subsToRemove);
+
+            if (_handlers[eventType].Count == 0)
+            {
+                _handlers.Remove(eventType);
+
+                RaiseOnEventRemoved(new EventRemovedArgs(eventType));
             }
         }
 
-        private void RaiseOnEventRemoved(Type eventType)
-        {
-            var handler = OnEventRemoved;
-            handler?.Invoke(this, eventType);
-        }
+        public bool HasSubscriptionsForEvent(Type eventType) => _handlers.ContainsKey(eventType);
 
         public bool HasSubscriptionsForEvent<T>() where T : IntegrationEvent => _handlers.ContainsKey(typeof(T));
 
-        public IEnumerable<Type> GetHandlersForEvent<T>() where T : IntegrationEvent => _handlers[typeof(T)];
+        public IEnumerable<Type> GetHandlersForEvent<T>() where T : IntegrationEvent =>
+            HasSubscriptionsForEvent<T>()
+                ? _handlers[typeof(T)]
+                : Enumerable.Empty<Type>();
+
+        private void RaiseOnEventRemoved(EventRemovedArgs args)
+        {
+            var handler = OnEventRemoved;
+            handler?.Invoke(this, args);
+        }
+
+        private bool HasSubscription(Type eventType, Type subType)
+        {
+            return HasSubscriptionsForEvent(eventType) && _handlers[eventType].Contains(subType);
+        }
     }
 }
