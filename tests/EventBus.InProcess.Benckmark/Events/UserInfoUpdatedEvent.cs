@@ -1,4 +1,4 @@
-﻿namespace EventBus.InProcess.Benckmark.Events
+﻿namespace EventBus.InProcess.Benchmark.Events
 {
     internal class UserInfoUpdatedEvent : IntegrationEvent
     {

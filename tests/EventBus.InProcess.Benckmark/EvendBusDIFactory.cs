@@ -1,10 +1,10 @@
-﻿using EventBus.InProcess.Benckmark.Events;
-using EventBus.InProcess.Benckmark.Handlers;
+﻿using EventBus.InProcess.Benchmark.Events;
+using EventBus.InProcess.Benchmark.Handlers;
 using EventBus.InProcess.Internals;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace EventBus.InProcess.Benckmark
+namespace EventBus.InProcess.Benchmark
 {
     internal class EvendBusDIFactory
     {

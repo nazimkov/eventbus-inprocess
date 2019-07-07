@@ -1,8 +1,8 @@
-﻿using EventBus.InProcess.Benckmark.Handlers;
+﻿using EventBus.InProcess.Benchmark.Handlers;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace EventBus.InProcess.Benckmark
+namespace EventBus.InProcess.Benchmark
 {
     internal static class PoorManBenchmarkRunner
     {
@@ -21,7 +21,7 @@ namespace EventBus.InProcess.Benckmark
             var eventRecorder = busFactory.ServiceProvider.GetRequiredService<EventRecorder>();
             var benchmark = new EventBusPoorManBenchmark(bus, eventRecorder);
 
-            RunBenchmark(benchmark, 1);
+            RunBenchmark(benchmark, subsQty);
             bus.Dispose();
         }
 

@@ -1,10 +1,10 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
-using EventBus.InProcess.Benckmark.Events;
-using EventBus.InProcess.Benckmark.Handlers;
+using EventBus.InProcess.Benchmark.Events;
+using EventBus.InProcess.Benchmark.Handlers;
 using System.Threading.Tasks;
 
-namespace EventBus.InProcess.Benckmark
+namespace EventBus.InProcess.Benchmark
 {
     [SimpleJob(RunStrategy.Monitoring, launchCount: 3, warmupCount: 5, targetCount: 50)]
     [RPlotExporter, RankColumn]
