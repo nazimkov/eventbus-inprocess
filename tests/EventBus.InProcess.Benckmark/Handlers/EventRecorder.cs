@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace EventBus.InProcess.Benckmark.Handlers
+namespace EventBus.InProcess.Benchmark.Handlers
 {
     public class EventRecorder
     {
