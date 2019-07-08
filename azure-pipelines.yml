@@ -13,7 +13,7 @@ variables:
   solution: './EventBus.InProcess.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  tests: './tests/EventBus.InProcess.Tests/EventBus.InProcess.Tests.csproj'
+  testProjects: '**/[Tt]est[s]/*.csproj'
   projectName: 'EventBus.InProcess'
 
 steps:
@@ -28,7 +28,7 @@ steps:
   displayName: 'Unit testing'
   inputs:
     command: 'test'
-    projects: '$(tests)'
+    projects: '$(testProjects)'
     arguments: '--configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
 
 
