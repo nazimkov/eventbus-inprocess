@@ -13,7 +13,7 @@ variables:
   solution: './EventBus.InProcess.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  testProjects: '**/[Tt]est[s]/*.csproj'
+  testProjects: '**/tests/**/*.csproj'
   projectName: 'EventBus.InProcess'
 
 steps:
