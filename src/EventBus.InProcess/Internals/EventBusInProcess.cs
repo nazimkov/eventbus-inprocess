@@ -11,13 +11,13 @@ namespace EventBus.InProcess.Internals
     internal class EventBusInProcess : IEventBus
     {
         private readonly IEventBusSubscriptionManager _subsManager;
-        private readonly IChannelManager _channelManager;
+        private readonly IChanneslManager _channelManager;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly CancellationTokenSource _cts;
 
         public EventBusInProcess(
             IEventBusSubscriptionManager subsManager,
-            IChannelManager channelManager,
+            IChanneslManager channelManager,
             IServiceScopeFactory scopeFactory)
         {
             _subsManager = subsManager ??

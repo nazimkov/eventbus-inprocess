@@ -9,7 +9,7 @@ namespace EventBus.InProcess
         public static IServiceCollection AddEventBus(this IServiceCollection services)
         {
             services.AddSingleton<IEventBusSubscriptionManager, InMemorySubscriptionManager>();
-            services.AddSingleton<IChannelManager, ChannelManager>();
+            services.AddSingleton<IChanneslManager, ThreadingChanelsManager>();
             services.AddSingleton<IEventBus, EventBusInProcess>();
 
             return services;

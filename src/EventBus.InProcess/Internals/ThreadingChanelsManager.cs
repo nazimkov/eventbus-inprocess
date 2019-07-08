@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace EventBus.InProcess.Internals
 {
-    public class ChannelManager : IChannelManager
+    public class ThreadingChanelsManager : IChanneslManager
     {
         private readonly Dictionary<Type, ValueTuple<object, CancellationTokenSource>> _channels;
         private readonly CancellationTokenSource _internalCts;
 
-        public ChannelManager()
+        public ThreadingChanelsManager()
         {
             _channels = new Dictionary<Type, ValueTuple<object, CancellationTokenSource>>();
             _internalCts = new CancellationTokenSource();

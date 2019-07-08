@@ -7,14 +7,14 @@ using Xunit;
 
 namespace EventBus.InProcess.Tests
 {
-    public class ChannelManagerTests
+    public class ThreadingChanelsManagerTests
     {
-        private readonly ChannelManager _channelManager;
+        private readonly ThreadingChanelsManager _channelsManager;
         private readonly Func<ChannelMessage, ValueTask> _dummyReceiver = _ => new ValueTask();
 
-        public ChannelManagerTests()
+        public ThreadingChanelsManagerTests()
         {
-            _channelManager = new ChannelManager();
+            _channelsManager = new ThreadingChanelsManager();
         }
 
         [Fact]
@@ -22,7 +22,7 @@ namespace EventBus.InProcess.Tests
         {
             // Arrange
             // Act
-            var channel = await _channelManager.CreateAsync(_dummyReceiver, CancellationToken.None);
+            var channel = await _channelsManager.CreateAsync(_dummyReceiver, CancellationToken.None);
 
             // Assert
             Assert.NotNull(channel);
@@ -33,10 +33,10 @@ namespace EventBus.InProcess.Tests
         public async Task CreateAsync_ExistingMessageType_ReturnsExistingChannel()
         {
             // Arrange
-            var newChannel = await _channelManager.CreateAsync(_dummyReceiver, CancellationToken.None);
+            var newChannel = await _channelsManager.CreateAsync(_dummyReceiver, CancellationToken.None);
 
             // Act
-            var existingChannel = _channelManager.Get<ChannelMessage>();
+            var existingChannel = _channelsManager.Get<ChannelMessage>();
 
             // Assert
             Assert.True(ReferenceEquals(newChannel, existingChannel));
@@ -52,7 +52,7 @@ namespace EventBus.InProcess.Tests
                 pause.Set();
                 return new ValueTask();
             };
-            var newChannel = await _channelManager.CreateAsync(callback, CancellationToken.None);
+            var newChannel = await _channelsManager.CreateAsync(callback, CancellationToken.None);
 
             // Act
             await newChannel.Writer.WriteAsync(new ChannelMessage());
@@ -65,10 +65,10 @@ namespace EventBus.InProcess.Tests
         public async Task Get_ExistingMessageType_ReturnsExistingChannel()
         {
             // Arrange
-            var newChannel = await _channelManager.CreateAsync(_dummyReceiver, CancellationToken.None);
+            var newChannel = await _channelsManager.CreateAsync(_dummyReceiver, CancellationToken.None);
 
             // Act
-            var existingChannel = _channelManager.Get<ChannelMessage>();
+            var existingChannel = _channelsManager.Get<ChannelMessage>();
 
             // Assert
             Assert.True(ReferenceEquals(newChannel, existingChannel));
@@ -79,7 +79,7 @@ namespace EventBus.InProcess.Tests
         {
             // Act
             // Assert
-            Assert.Throws<ArgumentException>(() => _channelManager.Get<TheoryAttribute>());
+            Assert.Throws<ArgumentException>(() => _channelsManager.Get<TheoryAttribute>());
         }
 
         internal class ChannelMessage
