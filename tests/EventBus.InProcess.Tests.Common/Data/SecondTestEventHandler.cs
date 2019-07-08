@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace EventBus.InProcess.Tests.Data
+namespace EventBus.InProcess.Tests.Common.Data
 {
-    internal class SecondTestEventHandler : TestEventHandler
+    public class SecondTestEventHandler : TestEventHandler
     {
         public SecondTestEventHandler(Action<TestEvent> callback) : base(callback)
         {

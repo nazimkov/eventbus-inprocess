@@ -1,5 +1,5 @@
 ﻿using EventBus.InProcess.Internals;
-using EventBus.InProcess.Tests.Data;
+using EventBus.InProcess.Tests.Common.Data;
 using System;
 using Xunit;
 

@@ -37,8 +37,6 @@ namespace EventBus.InProcess.Benchmark
         private void ConfigureServices(IServiceCollection services, int subsQuantity)
         {
             services.AddSingleton<EventRecorder>();
-            services.AddSingleton<IChannelManager, ChannelManager>();
-            services.AddSingleton<IEventBusSubscriptionManager, InMemorySubscriptionManager>();
             services.AddEventBus();
             RegisterHandlers(services, subsQuantity);
         }

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 
-[assembly : InternalsVisibleTo("EventBus.InProcess.Tests")]
+[assembly: InternalsVisibleTo("EventBus.InProcess.Tests")]
 
 namespace EventBus.InProcess.Internals
 {
@@ -29,7 +29,7 @@ namespace EventBus.InProcess.Internals
             _cts = new CancellationTokenSource();
         }
 
-        public void Publish<T>(T @event)where T : IntegrationEvent
+        public void Publish<T>(T @event) where T : IntegrationEvent
         {
             var channel = _channelManager.Get<T>();
             channel.Writer.WriteAsync(@event).GetAwaiter().GetResult();
@@ -59,11 +59,11 @@ namespace EventBus.InProcess.Internals
             _subsManager.RemoveSubscription<T, TH>();
         }
 
-        public async ValueTask ProcessEvent<T>(T @event)where T : IntegrationEvent
+        public async ValueTask ProcessEvent<T>(T @event) where T : IntegrationEvent
         {
             if (_subsManager.HasSubscriptionsForEvent<T>())
             {
-                using(var scope = _scopeFactory.CreateScope())
+                using (var scope = _scopeFactory.CreateScope())
                 {
                     foreach (var handlerType in _subsManager.GetHandlersForEvent<T>())
                     {
@@ -74,7 +74,7 @@ namespace EventBus.InProcess.Internals
             }
         }
 
-#region IDisposable Support
+        #region IDisposable Support
 
         private bool disposedValue = false; // To detect redundant calls
 
@@ -99,6 +99,6 @@ namespace EventBus.InProcess.Internals
             Dispose(true);
         }
 
-#endregion IDisposable Support
+        #endregion IDisposable Support
     }
 }

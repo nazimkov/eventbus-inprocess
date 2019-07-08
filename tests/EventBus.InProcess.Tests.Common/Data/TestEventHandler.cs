@@ -2,9 +2,9 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EventBus.InProcess.Tests.Data
+namespace EventBus.InProcess.Tests.Common.Data
 {
-    internal class TestEventHandler : IIntegrationEventHandler<TestEvent>
+    public class TestEventHandler : IIntegrationEventHandler<TestEvent>
     {
         private readonly Action<TestEvent> _callback;
 

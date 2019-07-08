@@ -1,90 +1,57 @@
 using EventBus.InProcess.Internals;
-using EventBus.InProcess.Tests.Data;
 using EventBus.InProcess.Tests.Mocks;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace EventBus.InProcess.Tests
 {
     public class EventBusInProcessTests
     {
-        [Fact]
-        public async Task PublishAsync_EventWithHandler_HandlerReceivesEvent()
+        private readonly Mock<IEventBusSubscriptionManager> _subManagerMock;
+        private readonly Mock<IChannelManager> _channelManagerMock;
+        private readonly Mock<IServiceScopeFactory> _scopeFactoryMock;
+
+        public EventBusInProcessTests()
         {
-            // Arrange
-            TestEvent receivedEvent = null;
-            var sendedEvent = new TestEvent();
-            var pause = new ManualResetEvent(false);
-            var handler = new TestEventHandler(e => { receivedEvent = e; pause.Set(); });
+            _subManagerMock = new Mock<IEventBusSubscriptionManager>();
+            _channelManagerMock = new Mock<IChannelManager>();
+            _scopeFactoryMock = ServiceScopeFactoryMock.GetMock(new Dictionary<Type, object>());
+        }
 
-            var services = new Dictionary<Type, object>
-            {
-                { typeof(TestEventHandler), handler }
-            };
-
-            var bus = BuildBus(services);
-
+        [Theory]
+        [MemberData(nameof(GetCtorExceptionTestData))]
+        public void Ctor_OneOfParameterIsNull_ThrowsArgumentNullException(
+            IEventBusSubscriptionManager subsManager,
+            IChannelManager channelManager,
+            IServiceScopeFactory scopeFactory)
+        {
             // Act
-            bus.Subscribe<TestEvent, TestEventHandler>();
-            await bus.PublishAsync(sendedEvent);
-
             // Assert
-            Assert.True(pause.WaitOne(100));
-            Assert.NotNull(receivedEvent);
-            AssertEventsEqual(sendedEvent, receivedEvent);
+            Assert.Throws<ArgumentNullException>(() => new EventBusInProcess(subsManager, channelManager, scopeFactory));
         }
 
         [Fact]
-        public async Task PublishAsync_EventWithMultipleHandlers_AllHandlersReceiveEvent()
+        public void Ctor_AllParametersPassed_InstanceCreated()
         {
-            // Arrange
-            TestEvent receivedEvent = null;
-            var sendedEvent = new TestEvent();
-            var pauseFirst = new ManualResetEvent(false);
-            var pauseSecond = new ManualResetEvent(false);
-            var handlerFirst = new TestEventHandler(e => { receivedEvent = e; pauseFirst.Set(); });
-            var handlerSecond = new SecondTestEventHandler(e => { receivedEvent = e; pauseSecond.Set(); });
-
-            var services = new Dictionary<Type, object>
-            {
-                { typeof(TestEventHandler), handlerFirst },
-                { typeof(SecondTestEventHandler), handlerSecond }
-            };
-
-            var bus = BuildBus(services);
-
             // Act
-            bus.Subscribe<TestEvent, TestEventHandler>();
-            bus.Subscribe<TestEvent, SecondTestEventHandler>();
-            await bus.PublishAsync(sendedEvent);
+            var bus = new EventBusInProcess(_subManagerMock.Object, _channelManagerMock.Object, _scopeFactoryMock.Object);
 
             // Assert
-            AssertEventReceived(pauseFirst);
-            AssertEventReceived(pauseSecond);
-            Assert.NotNull(receivedEvent);
-            AssertEventsEqual(sendedEvent, receivedEvent);
+            Assert.NotNull(bus);
         }
 
-        private static EventBusInProcess BuildBus(Dictionary<Type, object> services)
+        public static IEnumerable<object[]> GetCtorExceptionTestData()
         {
-            var scopeFactory = ServiceScopeFactoryMock.GetMock(services);
-            var channelManager = new ChannelManager();
-            var subsManager = new InMemorySubscriptionManager();
-            return new EventBusInProcess(subsManager, channelManager, scopeFactory.Object);
-        }
+            var subManagerEmpty = new Mock<IEventBusSubscriptionManager>().Object;
+            var channelManagerEmpty = new Mock<IChannelManager>().Object;
+            var scopeFactoryEmpty = new Mock<IServiceScopeFactory>().Object;
 
-        private void AssertEventReceived(ManualResetEvent resetEvent)
-        {
-            Assert.True(resetEvent.WaitOne(100));
-        }
-
-        private void AssertEventsEqual(IntegrationEvent expected, IntegrationEvent given)
-        {
-            Assert.Equal(expected.Id, given.Id);
-            Assert.Equal(expected.CreationDate, given.CreationDate);
+            yield return new object[] { null, channelManagerEmpty, scopeFactoryEmpty };
+            yield return new object[] { subManagerEmpty, null, scopeFactoryEmpty };
+            yield return new object[] { subManagerEmpty, channelManagerEmpty, null };
         }
     }
 }

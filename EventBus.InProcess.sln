@@ -1,13 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.705
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29025.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.InProcess", "src\EventBus.InProcess\EventBus.InProcess.csproj", "{ABEAFD40-B852-42F9-B1F0-AB0520571DC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus.InProcess.Tests", "tests\EventBus.InProcess.Tests\EventBus.InProcess.Tests.csproj", "{76A09069-E5E8-4B3A-A160-4D833885A9F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.InProcess.Tests", "tests\EventBus.InProcess.Tests\EventBus.InProcess.Tests.csproj", "{76A09069-E5E8-4B3A-A160-4D833885A9F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus.InProcess.Benckmark", "tests\EventBus.InProcess.Benckmark\EventBus.InProcess.Benckmark.csproj", "{FFF39D4B-26BA-4A95-B4ED-8512D7D862EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.InProcess.Benckmark", "tests\EventBus.InProcess.Benckmark\EventBus.InProcess.Benckmark.csproj", "{FFF39D4B-26BA-4A95-B4ED-8512D7D862EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus.InProcess.Tests.Integration", "tests\EventBus.InProcess.Tests.Integration\EventBus.InProcess.Tests.Integration.csproj", "{4461908A-F26F-432F-A138-3FA430C6DAD8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus.InProcess.Tests.Common", "tests\EventBus.InProcess.Tests.Common\EventBus.InProcess.Tests.Common.csproj", "{CC6B139A-BF55-476E-BF24-56323B1A43E0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{478F2C9E-1135-4626-A990-875223FE3139}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,9 +33,22 @@ Global
 		{FFF39D4B-26BA-4A95-B4ED-8512D7D862EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFF39D4B-26BA-4A95-B4ED-8512D7D862EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FFF39D4B-26BA-4A95-B4ED-8512D7D862EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4461908A-F26F-432F-A138-3FA430C6DAD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4461908A-F26F-432F-A138-3FA430C6DAD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4461908A-F26F-432F-A138-3FA430C6DAD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4461908A-F26F-432F-A138-3FA430C6DAD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC6B139A-BF55-476E-BF24-56323B1A43E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC6B139A-BF55-476E-BF24-56323B1A43E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC6B139A-BF55-476E-BF24-56323B1A43E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC6B139A-BF55-476E-BF24-56323B1A43E0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{76A09069-E5E8-4B3A-A160-4D833885A9F2} = {478F2C9E-1135-4626-A990-875223FE3139}
+		{4461908A-F26F-432F-A138-3FA430C6DAD8} = {478F2C9E-1135-4626-A990-875223FE3139}
+		{CC6B139A-BF55-476E-BF24-56323B1A43E0} = {478F2C9E-1135-4626-A990-875223FE3139}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A40AB4E3-0719-4409-9B41-87BBF1C06E62}
