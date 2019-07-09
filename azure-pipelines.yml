@@ -15,6 +15,7 @@ variables:
   buildConfiguration: 'Release'
   testProjects: '**/tests/**/*.csproj'
   projectName: 'EventBus.InProcess'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
 
 steps:
 - task: DotNetCoreCLI@2
