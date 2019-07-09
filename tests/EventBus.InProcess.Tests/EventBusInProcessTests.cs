@@ -11,13 +11,13 @@ namespace EventBus.InProcess.Tests
     public class EventBusInProcessTests
     {
         private readonly Mock<IEventBusSubscriptionManager> _subManagerMock;
-        private readonly Mock<IChannelManager> _channelManagerMock;
+        private readonly Mock<IChanneslManager> _channelsManagerMock;
         private readonly Mock<IServiceScopeFactory> _scopeFactoryMock;
 
         public EventBusInProcessTests()
         {
             _subManagerMock = new Mock<IEventBusSubscriptionManager>();
-            _channelManagerMock = new Mock<IChannelManager>();
+            _channelsManagerMock = new Mock<IChanneslManager>();
             _scopeFactoryMock = ServiceScopeFactoryMock.GetMock(new Dictionary<Type, object>());
         }
 
@@ -25,7 +25,7 @@ namespace EventBus.InProcess.Tests
         [MemberData(nameof(GetCtorExceptionTestData))]
         public void Ctor_OneOfParameterIsNull_ThrowsArgumentNullException(
             IEventBusSubscriptionManager subsManager,
-            IChannelManager channelManager,
+            IChanneslManager channelManager,
             IServiceScopeFactory scopeFactory)
         {
             // Act
@@ -37,7 +37,7 @@ namespace EventBus.InProcess.Tests
         public void Ctor_AllParametersPassed_InstanceCreated()
         {
             // Act
-            var bus = new EventBusInProcess(_subManagerMock.Object, _channelManagerMock.Object, _scopeFactoryMock.Object);
+            var bus = new EventBusInProcess(_subManagerMock.Object, _channelsManagerMock.Object, _scopeFactoryMock.Object);
 
             // Assert
             Assert.NotNull(bus);
@@ -46,7 +46,7 @@ namespace EventBus.InProcess.Tests
         public static IEnumerable<object[]> GetCtorExceptionTestData()
         {
             var subManagerEmpty = new Mock<IEventBusSubscriptionManager>().Object;
-            var channelManagerEmpty = new Mock<IChannelManager>().Object;
+            var channelManagerEmpty = new Mock<IChanneslManager>().Object;
             var scopeFactoryEmpty = new Mock<IServiceScopeFactory>().Object;
 
             yield return new object[] { null, channelManagerEmpty, scopeFactoryEmpty };

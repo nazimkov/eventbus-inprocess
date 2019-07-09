@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace EventBus.InProcess.Internals
 {
-    public interface IChannelManager : IDisposable
+    public interface IChanneslManager : IDisposable
     {
         Task<Channel<T>> CreateAsync<T>(Func<T, ValueTask> receiver, CancellationToken cancellationToken);
         Channel<T> Get<T>();
