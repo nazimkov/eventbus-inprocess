@@ -1,20 +1,19 @@
-﻿using EventBus.InProcess.Internals;
+﻿using EventBus.InProcess.Internals.Channels;
 using System;
 using System.Threading;
-using System.Threading.Channels;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace EventBus.InProcess.Tests
 {
-    public class ThreadingChanelsManagerTests
+    public class ThreadChanelsManagerTests
     {
-        private readonly ThreadingChanelsManager _channelsManager;
+        private readonly ThreadChanelsManager _channelsManager;
         private readonly Func<ChannelMessage, ValueTask> _dummyReceiver = _ => new ValueTask();
 
-        public ThreadingChanelsManagerTests()
+        public ThreadChanelsManagerTests()
         {
-            _channelsManager = new ThreadingChanelsManager();
+            _channelsManager = new ThreadChanelsManager();
         }
 
         [Fact]
@@ -26,7 +25,7 @@ namespace EventBus.InProcess.Tests
 
             // Assert
             Assert.NotNull(channel);
-            Assert.True(channel is Channel<ChannelMessage>);
+            Assert.True(channel is ThreadChannel<ChannelMessage>);
         }
 
         [Fact]
@@ -55,7 +54,7 @@ namespace EventBus.InProcess.Tests
             var newChannel = await _channelsManager.CreateAsync(callback, CancellationToken.None);
 
             // Act
-            await newChannel.Writer.WriteAsync(new ChannelMessage());
+            await newChannel.WriteAsync(new ChannelMessage(), CancellationToken.None);
 
             //Assert
             Assert.True(pause.WaitOne(100));

@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
-namespace EventBus.InProcess.Internals
+namespace EventBus.InProcess.Internals.Channels
 {
     public static class ChannelReaderExtensions
     {

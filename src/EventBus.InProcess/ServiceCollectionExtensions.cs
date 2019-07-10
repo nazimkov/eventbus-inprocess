@@ -1,6 +1,6 @@
 ﻿using EventBus.InProcess.Internals;
+using EventBus.InProcess.Internals.Channels;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace EventBus.InProcess
 {
@@ -9,7 +9,7 @@ namespace EventBus.InProcess
         public static IServiceCollection AddEventBus(this IServiceCollection services)
         {
             services.AddSingleton<IEventBusSubscriptionManager, InMemorySubscriptionManager>();
-            services.AddSingleton<IChanneslManager, ThreadingChanelsManager>();
+            services.AddSingleton<IChanneslManager, ThreadChanelsManager>();
             services.AddSingleton<IEventBus, EventBusInProcess>();
 
             return services;

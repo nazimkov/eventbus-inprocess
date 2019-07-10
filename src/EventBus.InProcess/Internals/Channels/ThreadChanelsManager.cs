@@ -4,20 +4,20 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
-namespace EventBus.InProcess.Internals
+namespace EventBus.InProcess.Internals.Channels
 {
-    public class ThreadingChanelsManager : IChanneslManager
+    internal class ThreadChanelsManager : IChanneslManager
     {
         private readonly Dictionary<Type, ValueTuple<object, CancellationTokenSource>> _channels;
         private readonly CancellationTokenSource _internalCts;
 
-        public ThreadingChanelsManager()
+        public ThreadChanelsManager()
         {
             _channels = new Dictionary<Type, ValueTuple<object, CancellationTokenSource>>();
             _internalCts = new CancellationTokenSource();
         }
 
-        public async Task<Channel<T>> CreateAsync<T>(Func<T, ValueTask> receiver, CancellationToken cancellationToken)
+        public async Task<IChannel<T>> CreateAsync<T>(Func<T, ValueTask> receiver, CancellationToken cancellationToken)
         {
             var eventType = typeof(T);
 
@@ -30,29 +30,30 @@ namespace EventBus.InProcess.Internals
             var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _internalCts.Token);
 
             // TODO Consider to move from Task per Channel to one Channel for all events
-            await Task.Factory.StartNew(async() =>
+            await Task.Factory.StartNew(async () =>
                 await newChannel.Reader.ReadUntilCancelledAsync(receiver, linkedCts.Token),
                 linkedCts.Token,
                 TaskCreationOptions.LongRunning,
                 TaskScheduler.Default).ConfigureAwait(false);
 
-            _channels.Add(eventType, (newChannel, linkedCts));
+            var threadChannel = new ThreadChannel<T>(newChannel);
+            _channels.Add(eventType, (threadChannel, linkedCts));
 
-            return newChannel;
+            return threadChannel;
         }
 
-        public Channel<T> Get<T>()
+        public IChannel<T> Get<T>()
         {
-            var(channel, _) = GetChannelWithCts<T>();
+            var (channel, _) = GetChannelWithCts<T>();
 
-            return (Channel<T>)channel;
+            return (ThreadChannel<T>)channel;
         }
 
         public void DisposeChannel<T>()
         {
-            var(_, cts) = GetChannelWithCts<T>();
+            var (_, cts) = GetChannelWithCts<T>();
 
-            using(cts) // Dispose linked CTS
+            using (cts) // Dispose linked CTS
             {
                 cts.Cancel();
             }
@@ -60,7 +61,7 @@ namespace EventBus.InProcess.Internals
             _channels.Remove(typeof(T));
         }
 
-        private(object, CancellationTokenSource)GetChannelWithCts<T>()
+        private (object, CancellationTokenSource) GetChannelWithCts<T>()
         {
             var eventType = typeof(T);
 
@@ -74,7 +75,7 @@ namespace EventBus.InProcess.Internals
 
         private bool HasChannel<T>() => _channels.ContainsKey(typeof(T));
 
-#region IDisposable Support
+        #region IDisposable Support
 
         private bool disposedValue = false; // To detect redundant calls
 
@@ -99,6 +100,6 @@ namespace EventBus.InProcess.Internals
             Dispose(true);
         }
 
-#endregion IDisposable Support
+        #endregion IDisposable Support
     }
 }
