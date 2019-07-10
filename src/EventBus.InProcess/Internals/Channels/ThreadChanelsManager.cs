@@ -27,16 +27,17 @@ namespace EventBus.InProcess.Internals.Channels
             }
 
             var newChannel = Channel.CreateUnbounded<T>();
+            var threadChannel = new ThreadChannel<T>(newChannel);
+
             var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _internalCts.Token);
 
             // TODO Consider to move from Task per Channel to one Channel for all events
             await Task.Factory.StartNew(async () =>
-                await newChannel.Reader.ReadUntilCancelledAsync(receiver, linkedCts.Token),
+                await threadChannel.ReadUntilCancelledAsync(receiver, linkedCts.Token),
                 linkedCts.Token,
                 TaskCreationOptions.LongRunning,
                 TaskScheduler.Default).ConfigureAwait(false);
 
-            var threadChannel = new ThreadChannel<T>(newChannel);
             _channels.Add(eventType, (threadChannel, linkedCts));
 
             return threadChannel;
