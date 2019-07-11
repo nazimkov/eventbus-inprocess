@@ -73,6 +73,36 @@ namespace EventBus.InProcess.Tests
             Assert.True(pause.WaitOne(100));
         }
 
+
+        [Fact]
+        public async Task ReadUntilCancelledAsync_ReadCanceled_ReadingIsStopped()
+        {
+            // Arrange
+            const int MaxCount = 100000;
+            const int CountToCancell = 100;
+
+            var counter = 0;
+            var cts = new CancellationTokenSource();
+            var channel = new TestChannel<string>(MaxCount);
+            var threadChannel = new ThreadChannel<string>(channel);
+
+            Func<string, ValueTask> testReceiver = _ => 
+            {
+                if(counter >= CountToCancell)
+                {
+                    cts.Cancel();
+                }
+                counter++;
+                return new ValueTask();
+            };
+
+            // Act
+            await threadChannel.ReadUntilCancelledAsync(testReceiver, cts.Token);
+
+            // Assert
+            Assert.True(CountToCancell <= counter && counter <= MaxCount);
+        }
+
         private class TestChannel<T> : Channel<T>
         {
             public bool IsWritten => _testChannelWriter.IsWritten;
@@ -80,10 +110,11 @@ namespace EventBus.InProcess.Tests
             private TestChannelWriter _testChannelWriter;
             private TestChannelReader _testChannelReader;
 
-            public TestChannel()
+            public TestChannel(int maxCount = 1)
             {
                 _testChannelWriter = new TestChannelWriter();
                 _testChannelReader = new TestChannelReader();
+                _testChannelReader.MaxCount = maxCount;
                 Writer = _testChannelWriter;
                 Reader = _testChannelReader;
             }
@@ -112,16 +143,19 @@ namespace EventBus.InProcess.Tests
             private class TestChannelReader : ChannelReader<T>
             {
                 private int _counter;
+
+                public int MaxCount {get; set;}
+
                 public override bool TryRead(out T item)
                 {
                     _counter++;
                     item = default;
-                    return _counter <= 1;
+                    return _counter <= MaxCount;
                 }
 
                 public override ValueTask<bool> WaitToReadAsync(CancellationToken cancellationToken = default)
                 {
-                    return new ValueTask<bool>(false);
+                    return new ValueTask<bool>(_counter <= MaxCount);
                 }
             }
         }
