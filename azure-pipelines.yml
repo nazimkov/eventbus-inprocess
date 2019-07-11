@@ -63,7 +63,7 @@ steps:
   inputs:
     command: 'pack'
     projects: '$(project)'
-    arguments: '--configuration $(buildConfiguration) -o '$(build.artifactStagingDirectory)'
+    arguments: '--configuration $(buildConfiguration) -o $(build.artifactStagingDirectory)'
     nobuild: true
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
