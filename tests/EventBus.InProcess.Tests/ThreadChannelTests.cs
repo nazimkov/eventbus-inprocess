@@ -60,22 +60,22 @@ namespace EventBus.InProcess.Tests
         }
 
         [Fact]
-        public async Task ReadUntilCancelledAsync_ValidReceiver_MessageIsRead()
+        public async Task ReadUntilCancelledAsync_Receiver_MessageIsRead()
         {
             // Arrange
-            Func<string, ValueTask> dummyReceiver = _ => new ValueTask();
+            var pause = new ManualResetEvent(false);
+            Func<string, ValueTask> testReceiver = _ => { pause.Set(); return new ValueTask(); };
             
             // Act
-            await _threadChannel.ReadUntilCancelledAsync(dummyReceiver, CancellationToken.None);
+            await _threadChannel.ReadUntilCancelledAsync(testReceiver, CancellationToken.None);
 
             // Assert
-            Assert.True(_channel.IsRead);
+            Assert.True(pause.WaitOne(100));
         }
 
         private class TestChannel<T> : Channel<T>
         {
             public bool IsWritten => _testChannelWriter.IsWritten;
-            public bool IsRead => _testChannelReader.IsRead;
 
             private TestChannelWriter _testChannelWriter;
             private TestChannelReader _testChannelReader;
@@ -111,13 +111,12 @@ namespace EventBus.InProcess.Tests
 
             private class TestChannelReader : ChannelReader<T>
             {
-                public bool IsRead { get; private set; }
-                private _oneTime = true;
+                private int _counter;
                 public override bool TryRead(out T item)
                 {
-                    IsRead = true;
+                    _counter++;
                     item = default;
-                    return true;
+                    return _counter <= 1;
                 }
 
                 public override ValueTask<bool> WaitToReadAsync(CancellationToken cancellationToken = default)
