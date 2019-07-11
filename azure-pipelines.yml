@@ -71,7 +71,7 @@ steps:
   displayName: 'Copy Files'
   inputs:
     SourceFolder: '$(Build.ArtifactStagingDirectory)'
-    Contents: '**\*.nupkg'
+    Contents: '**/*.nupkg'
     TargetFolder: '$(Build.ArtifactStagingDirectory)/Package'
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
