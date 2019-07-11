@@ -20,6 +20,7 @@ variables:
   buildConfiguration: 'Release'
   testProjects: '**/tests/**/*.csproj'
   projectName: 'EventBus.InProcess'
+  project: './src/EventBus.InProcess/EventBus.InProcess.csproj'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
 
 steps:
@@ -57,17 +58,26 @@ steps:
     codeCoverageTool: Cobertura
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
+- task: DotNetCoreCLI@2
+  displayName: 'Pack'
+  inputs:
+    command: 'pack'
+    projects: '$(project)'
+    arguments: '--configuration $(buildConfiguration) -o '$(build.artifactStagingDirectory)'
+    nobuild: true
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+
 - task: CopyFiles@2
   displayName: 'Copy Files'
   inputs:
     SourceFolder: '$(Build.ArtifactStagingDirectory)'
     Contents: '**\*.nupkg'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)\Package'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/Package'
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)\Package'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/Package'
   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 

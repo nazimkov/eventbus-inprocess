@@ -3,6 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
+    <Authors>Slava Nazimov</Authors>
+    <Version>0.0.1</Version>
+    <PackageReleaseNotes>Initial version</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/nazimkov/eventbus-inprocess</PackageProjectUrl>
+    <RepositoryUrl>git://github.com/nazimkov/eventbus-inprocess</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
