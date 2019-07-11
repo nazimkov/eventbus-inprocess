@@ -1,4 +1,5 @@
 using EventBus.InProcess.Internals;
+using EventBus.InProcess.Internals.Channels;
 using EventBus.InProcess.Tests.Mocks;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;

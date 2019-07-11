@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using EventBus.InProcess.Internals.Channels;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -32,7 +33,7 @@ namespace EventBus.InProcess.Internals
         public void Publish<T>(T @event) where T : IntegrationEvent
         {
             var channel = _channelManager.Get<T>();
-            channel.Writer.WriteAsync(@event).GetAwaiter().GetResult();
+            channel.WriteAsync(@event, CancellationToken.None).GetAwaiter().GetResult();
         }
 
         public async Task PublishAsync<T>(
@@ -41,7 +42,7 @@ namespace EventBus.InProcess.Internals
         where T : IntegrationEvent
         {
             var channel = _channelManager.Get<T>();
-            await channel.Writer.WriteAsync(@event, cancellationToken).ConfigureAwait(false);
+            await channel.WriteAsync(@event, cancellationToken).ConfigureAwait(false);
         }
 
         public void Subscribe<T, TH>()
