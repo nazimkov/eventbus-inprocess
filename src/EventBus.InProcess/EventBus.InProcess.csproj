@@ -9,6 +9,8 @@
     <PackageProjectUrl>https://github.com/nazimkov/eventbus-inprocess</PackageProjectUrl>
     <RepositoryUrl>git://github.com/nazimkov/eventbus-inprocess</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <PackageIconUrl>https://github.com/nazimkov/eventbus-inprocess/raw/master/assets/eventbus-inprocess_128x128.png</PackageIconUrl>
+    <PackageTags>events;eventbus;channels;pubsub;messaging;message-bus;message-queue;message-passing</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
