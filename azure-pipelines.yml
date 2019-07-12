@@ -4,10 +4,12 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
- branches:
+  tags: 
+    include:
+    - v*
+  branches:
       include:
       - master
-      - refs/tags/*
 pr:
 - master
 
@@ -73,11 +75,11 @@ steps:
     SourceFolder: '$(Build.ArtifactStagingDirectory)'
     Contents: '**/*.nupkg'
     TargetFolder: '$(Build.ArtifactStagingDirectory)/Package'
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  condition: and(succeeded(),  startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)/Package'
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+  condition: and(succeeded(),  startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
 
