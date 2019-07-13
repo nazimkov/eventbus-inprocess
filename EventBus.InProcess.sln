@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29025.244
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.705
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.InProcess", "src\EventBus.InProcess\EventBus.InProcess.csproj", "{ABEAFD40-B852-42F9-B1F0-AB0520571DC1}"
 EndProject
@@ -9,11 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.InProcess.Tests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.InProcess.Benckmark", "tests\EventBus.InProcess.Benckmark\EventBus.InProcess.Benckmark.csproj", "{FFF39D4B-26BA-4A95-B4ED-8512D7D862EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus.InProcess.Tests.Integration", "tests\EventBus.InProcess.Tests.Integration\EventBus.InProcess.Tests.Integration.csproj", "{4461908A-F26F-432F-A138-3FA430C6DAD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.InProcess.Tests.Integration", "tests\EventBus.InProcess.Tests.Integration\EventBus.InProcess.Tests.Integration.csproj", "{4461908A-F26F-432F-A138-3FA430C6DAD8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus.InProcess.Tests.Common", "tests\EventBus.InProcess.Tests.Common\EventBus.InProcess.Tests.Common.csproj", "{CC6B139A-BF55-476E-BF24-56323B1A43E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.InProcess.Tests.Common", "tests\EventBus.InProcess.Tests.Common\EventBus.InProcess.Tests.Common.csproj", "{CC6B139A-BF55-476E-BF24-56323B1A43E0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{478F2C9E-1135-4626-A990-875223FE3139}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus.InProcess.DependencyInjection", "src\EventBus.InProcess.DependencyInjection\EventBus.InProcess.DependencyInjection.csproj", "{209633A3-ABE9-468B-9DA9-62173132102A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{CC6B139A-BF55-476E-BF24-56323B1A43E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC6B139A-BF55-476E-BF24-56323B1A43E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC6B139A-BF55-476E-BF24-56323B1A43E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{209633A3-ABE9-468B-9DA9-62173132102A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{209633A3-ABE9-468B-9DA9-62173132102A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{209633A3-ABE9-468B-9DA9-62173132102A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{209633A3-ABE9-468B-9DA9-62173132102A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
