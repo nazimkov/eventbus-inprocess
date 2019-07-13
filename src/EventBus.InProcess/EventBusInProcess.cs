@@ -1,5 +1,5 @@
-﻿using EventBus.InProcess.Internals.Channels;
-using Microsoft.Extensions.DependencyInjection;
+﻿using EventBus.InProcess.Internals;
+using EventBus.InProcess.Internals.Channels;
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -7,26 +7,34 @@ using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("EventBus.InProcess.Tests")]
 
-namespace EventBus.InProcess.Internals
+namespace EventBus.InProcess
 {
-    internal class EventBusInProcess : IEventBus
+    public class EventBusInProcess : IEventBus
     {
         private readonly IEventBusSubscriptionManager _subsManager;
         private readonly IChanneslManager _channelManager;
-        private readonly IServiceScopeFactory _scopeFactory;
+        private readonly IServiceFactory _serviceFactory;
         private readonly CancellationTokenSource _cts;
 
-        public EventBusInProcess(
+        protected EventBusInProcess(
             IEventBusSubscriptionManager subsManager,
             IChanneslManager channelManager,
-            IServiceScopeFactory scopeFactory)
+            IServiceFactory serviceFactory)
         {
             _subsManager = subsManager ??
                 throw new ArgumentNullException(nameof(subsManager));
             _channelManager = channelManager ??
                 throw new ArgumentNullException(nameof(subsManager));
-            _scopeFactory = scopeFactory ??
-                throw new ArgumentNullException(nameof(scopeFactory));
+            _serviceFactory = serviceFactory ??
+                throw new ArgumentNullException(nameof(serviceFactory));
+            _cts = new CancellationTokenSource();
+        }
+
+        public EventBusInProcess()
+        {
+            _subsManager = new InMemorySubscriptionManager();
+            _channelManager = new ThreadChanelsManager();
+            _serviceFactory = new DafaultServiceFactory();
             _cts = new CancellationTokenSource();
         }
 
@@ -60,17 +68,14 @@ namespace EventBus.InProcess.Internals
             _subsManager.RemoveSubscription<T, TH>();
         }
 
-        public async ValueTask ProcessEvent<T>(T @event) where T : IntegrationEvent
+        protected virtual async ValueTask ProcessEvent<T>(T @event) where T : IntegrationEvent
         {
             if (_subsManager.HasSubscriptionsForEvent<T>())
             {
-                using (var scope = _scopeFactory.CreateScope())
+                foreach (var handlerType in _subsManager.GetHandlersForEvent<T>())
                 {
-                    foreach (var handlerType in _subsManager.GetHandlersForEvent<T>())
-                    {
-                        var handler = (IIntegrationEventHandler<T>)scope.ServiceProvider.GetRequiredService(handlerType);
-                        await handler.HandleAsync(@event, _cts.Token);
-                    }
+                    var handler = (IntegrationEventHandlerWrapper<T>)Activator.CreateInstance(typeof(IntegrationEventHandlerWrapperImpl<,>).MakeGenericType(typeof(T), handlerType));
+                    await handler.HandleAsync(@event, _serviceFactory, _cts.Token);
                 }
             }
         }
