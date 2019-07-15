@@ -2,7 +2,7 @@
 using EventBus.InProcess.Internals.Channels;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EventBus.InProcess
+namespace EventBus.InProcess.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
@@ -10,6 +10,7 @@ namespace EventBus.InProcess
         {
             services.AddSingleton<IEventBusSubscriptionManager, InMemorySubscriptionManager>();
             services.AddSingleton<IChanneslManager, ThreadChanelsManager>();
+            services.AddSingleton<IEventProcessor, EventProcessorDI>();
             services.AddSingleton<IEventBus, EventBusInProcess>();
 
             return services;

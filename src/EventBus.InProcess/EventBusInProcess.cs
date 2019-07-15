@@ -1,5 +1,4 @@
-﻿using EventBus.InProcess.Internals;
-using EventBus.InProcess.Internals.Channels;
+﻿using EventBus.InProcess.Internals.Channels;
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -13,28 +12,20 @@ namespace EventBus.InProcess
     {
         private readonly IEventBusSubscriptionManager _subsManager;
         private readonly IChanneslManager _channelManager;
-        private readonly IServiceFactory _serviceFactory;
+        private readonly IEventProcessor _eventProcessor;
         private readonly CancellationTokenSource _cts;
 
-        protected EventBusInProcess(
+        public EventBusInProcess(
             IEventBusSubscriptionManager subsManager,
             IChanneslManager channelManager,
-            IServiceFactory serviceFactory)
+            IEventProcessor eventProcessor)
         {
             _subsManager = subsManager ??
                 throw new ArgumentNullException(nameof(subsManager));
             _channelManager = channelManager ??
                 throw new ArgumentNullException(nameof(subsManager));
-            _serviceFactory = serviceFactory ??
-                throw new ArgumentNullException(nameof(serviceFactory));
-            _cts = new CancellationTokenSource();
-        }
-
-        public EventBusInProcess()
-        {
-            _subsManager = new InMemorySubscriptionManager();
-            _channelManager = new ThreadChanelsManager();
-            _serviceFactory = new DafaultServiceFactory();
+            _eventProcessor = eventProcessor ??
+                throw new ArgumentNullException(nameof(eventProcessor));
             _cts = new CancellationTokenSource();
         }
 
@@ -68,15 +59,12 @@ namespace EventBus.InProcess
             _subsManager.RemoveSubscription<T, TH>();
         }
 
-        protected virtual async ValueTask ProcessEvent<T>(T @event) where T : IntegrationEvent
+        private async ValueTask ProcessEvent<T>(T @event) where T : IntegrationEvent
         {
             if (_subsManager.HasSubscriptionsForEvent<T>())
             {
-                foreach (var handlerType in _subsManager.GetHandlersForEvent<T>())
-                {
-                    var handler = (IntegrationEventHandlerWrapper<T>)Activator.CreateInstance(typeof(IntegrationEventHandlerWrapperImpl<,>).MakeGenericType(typeof(T), handlerType));
-                    await handler.HandleAsync(@event, _serviceFactory, _cts.Token);
-                }
+                var handlersTypes = _subsManager.GetHandlersForEvent<T>();
+                await _eventProcessor.ProcessEventAsync(@event, handlersTypes, _cts.Token);
             }
         }
 
