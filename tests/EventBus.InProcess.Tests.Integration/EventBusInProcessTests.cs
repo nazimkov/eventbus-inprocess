@@ -5,13 +5,13 @@ using Xunit;
 
 namespace EventBus.InProcess.Tests.Integration
 {
-    public class EventBusInProcessTests : IClassFixture<ServiceCollectionFixture>
+    public class EventBusInProcessTests
     {
-        private readonly ServiceCollectionFixture _fixture;
+        private readonly EventBusInProcess _bus;
 
-        public EventBusInProcessTests(ServiceCollectionFixture fixture)
+        public EventBusInProcessTests()
         {
-            _fixture = fixture;
+            _bus = new EventBusInProcess();
         }
 
         [Fact]
@@ -21,13 +21,11 @@ namespace EventBus.InProcess.Tests.Integration
             TestEvent receivedEvent = null;
             var sendedEvent = new TestEvent();
             var pause = new ManualResetEvent(false);
-            _fixture.RegisterHandler(new TestEventHandler(e => { receivedEvent = e; pause.Set(); }));
+            _bus.Subscribe<TestEvent, TestEventHandler>(() => new TestEventHandler(e => { receivedEvent = e; pause.Set(); }));
 
-            var bus = _fixture.GetEventBus();
 
             // Act
-            bus.Subscribe<TestEvent, TestEventHandler>();
-            await bus.PublishAsync(sendedEvent);
+            await _bus.PublishAsync(sendedEvent);
 
             // Assert
             AssertEventReceived(pause);
@@ -42,15 +40,11 @@ namespace EventBus.InProcess.Tests.Integration
             TestEvent receivedEvent = null;
             var sendedEvent = new TestEvent();
             var (pauseFirst, pauseSecond) = (new ManualResetEvent(false), new ManualResetEvent(false));
-            _fixture.RegisterHandler(new TestEventHandler(e => { receivedEvent = e; pauseFirst.Set(); }));
-            _fixture.RegisterHandler(new SecondTestEventHandler(e => { receivedEvent = e; pauseSecond.Set(); }));
-
-            var bus = _fixture.GetEventBus();
+            _bus.Subscribe<TestEvent, TestEventHandler>(() => new TestEventHandler(e => { receivedEvent = e; pauseFirst.Set(); }));
+            _bus.Subscribe<TestEvent, SecondTestEventHandler>(() => new SecondTestEventHandler(e => { receivedEvent = e; pauseSecond.Set(); }));
 
             // Act
-            bus.Subscribe<TestEvent, TestEventHandler>();
-            bus.Subscribe<TestEvent, SecondTestEventHandler>();
-            await bus.PublishAsync(sendedEvent);
+            await _bus.PublishAsync(sendedEvent);
 
             // Assert
             AssertEventReceived(pauseFirst);

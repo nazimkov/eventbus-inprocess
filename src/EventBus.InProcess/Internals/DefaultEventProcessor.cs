@@ -5,18 +5,17 @@ using System.Threading.Tasks;
 
 namespace EventBus.InProcess.Internals
 {
-    internal class DefaultEventProcessor : EventProcessor
+    internal class DefaultEventProcessor : IEventProcessor
     {
-        private readonly IServiceFactory _serviceFactory;
-
-        public DefaultEventProcessor()
+        public async Task ProcessEventAsync<T>(T @event, IEnumerable<Type> hadlersTypes, IServiceFactory serviceFactory, CancellationToken cancellationToken)
+            where T : IntegrationEvent
         {
-            _serviceFactory = new DafaultServiceFactory();
+            foreach (var handlerType in hadlersTypes)
+            {
+                var handler = (IntegrationEventHandlerWrapper<T>)Activator.CreateInstance(typeof(IntegrationEventHandlerWrapperImpl<,>).MakeGenericType(typeof(T), handlerType));
+                await handler.HandleAsync(@event, serviceFactory, cancellationToken);
+            }
         }
 
-        public override Task ProcessEventAsync<T>(T @event, IEnumerable<Type> hadlersTypes, CancellationToken cancellationToken)
-        {
-            return ProcessEventAsync(@event, hadlersTypes, _serviceFactory, cancellationToken);
-        }
     }
 }

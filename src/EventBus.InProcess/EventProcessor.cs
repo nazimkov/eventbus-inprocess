@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EventBus.InProcess.Internals;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,12 +7,9 @@ using System.Threading.Tasks;
 namespace EventBus.InProcess
 {
 
-    public abstract class EventProcessor : IEventProcessor
+    public class EventProcessor : IEventProcessor
     {
-        public abstract Task ProcessEventAsync<T>(T @event, IEnumerable<Type> hadlersTypes, CancellationToken cancellationToken)
-            where T : IntegrationEvent;
-
-        protected async Task ProcessEventAsync<T>(T @event, IEnumerable<Type> hadlersTypes, IServiceFactory serviceFactory, CancellationToken cancellationToken)
+        public async Task ProcessEventAsync<T>(T @event, IEnumerable<Type> hadlersTypes, IServiceFactory serviceFactory, CancellationToken cancellationToken)
             where T : IntegrationEvent
         {
             foreach (var handlerType in hadlersTypes)
