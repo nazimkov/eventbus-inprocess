@@ -6,6 +6,5 @@ namespace EventBus.InProcess
     {
         THandler GetInstance<THandler>();
         object GetInstance(Type type);
-        void AddHandlerBuilder(Type type, HandlerBuilder builder);
     }
 }

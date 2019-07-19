@@ -3,14 +3,14 @@ using System.Collections.Concurrent;
 
 namespace EventBus.InProcess
 {
-    internal class DafaultServiceFactory : IServiceFactory
+    public sealed class DelegateServiceFactory : IServiceFactory
     {
         private readonly ConcurrentDictionary<Type, object> _handlers = new ConcurrentDictionary<Type, object>();
-        private readonly ConcurrentDictionary<Type, HandlerBuilder> _handlersResolvers = new ConcurrentDictionary<Type, HandlerBuilder>();
+        private readonly ConcurrentDictionary<Type, HandlerBuilder> _handlerBuilders = new ConcurrentDictionary<Type, HandlerBuilder>();
 
         public void AddHandlerBuilder(Type type, HandlerBuilder builder)
         {
-            _handlersResolvers.TryAdd(type, builder);
+            _handlerBuilders.TryAdd(type, builder);
         }
 
         public THandler GetInstance<THandler>() => (THandler)GetInstance(typeof(THandler));
@@ -22,11 +22,12 @@ namespace EventBus.InProcess
                 return handler;
             }
 
-            if (_handlersResolvers.TryGetValue(type, out var resolver))
+            if (_handlerBuilders.TryGetValue(type, out var resolver))
             {
                 return _handlers.GetOrAdd(type, resolver.Invoke());
             }
-            return _handlers.GetOrAdd(type, t => Activator.CreateInstance(type));
+
+            return _handlers.GetOrAdd(type, _ => Activator.CreateInstance(type));
         }
     }
 }

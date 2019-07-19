@@ -34,12 +34,12 @@ namespace EventBus.InProcess
             
         }
 
-        public EventBusInProcess()
+        public EventBusInProcess(IServiceFactory seviceFactory)
         {
             _subsManager = new InMemorySubscriptionManager();
             _channelManager = new ThreadChanelsManager();
             _eventProcessor = new DefaultEventProcessor();
-            _seviceFactory = new DafaultServiceFactory();
+            _seviceFactory = seviceFactory;
             _cts = new CancellationTokenSource();
 
         }
@@ -65,14 +65,6 @@ namespace EventBus.InProcess
         {
             _subsManager.AddSubscription<T, TH>();
             _channelManager.CreateAsync<T>(ProcessEvent, _cts.Token).GetAwaiter().GetResult();
-        }
-
-        public void Subscribe<T, TH>(HandlerBuilder builder)
-        where T : IntegrationEvent
-        where TH : IIntegrationEventHandler<T>
-        {
-            _seviceFactory.AddHandlerBuilder(typeof(TH), builder);
-            Subscribe<T, TH>();
         }
 
         public void Unsubscribe<T, TH>()
