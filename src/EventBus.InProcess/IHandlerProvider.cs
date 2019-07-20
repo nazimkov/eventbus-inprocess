@@ -2,7 +2,7 @@
 
 namespace EventBus.InProcess
 {
-    public interface IServiceFactory
+    public interface IHandlerProvider
     {
         THandler GetInstance<THandler>();
         object GetInstance(Type type);

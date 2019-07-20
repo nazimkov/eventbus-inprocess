@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventBus.InProcess.Internals.Channels
 {
-    internal class ThreadChanelsManager : IChanneslManager
+    public sealed class ThreadChanelsManager : IChanneslManager
     {
         private readonly Dictionary<Type, ValueTuple<object, CancellationTokenSource>> _channels;
         private readonly CancellationTokenSource _internalCts;
@@ -31,7 +31,6 @@ namespace EventBus.InProcess.Internals.Channels
 
             var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _internalCts.Token);
 
-            // TODO Consider to move from Task per Channel to one Channel for all events
             await Task.Factory.StartNew(async () =>
                 await threadChannel.ReadUntilCancelledAsync(receiver, linkedCts.Token),
                 linkedCts.Token,
@@ -80,7 +79,7 @@ namespace EventBus.InProcess.Internals.Channels
 
         private bool disposedValue = false; // To detect redundant calls
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (!disposedValue)
             {

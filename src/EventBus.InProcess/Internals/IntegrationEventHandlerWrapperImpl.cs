@@ -10,14 +10,14 @@ namespace EventBus.InProcess.Internals
     {
         public override Task HandleAsync(
             TIntegrationEvent @event,
-            IServiceFactory serviceFactory,
+            IHandlerProvider serviceFactory,
             CancellationToken cancellationToken = default)
         {
             var hanler = GetHandler(serviceFactory);
             return hanler.HandleAsync(@event, cancellationToken);
         }
 
-        private THandler GetHandler(IServiceFactory serviceFactory)
+        private THandler GetHandler(IHandlerProvider serviceFactory)
         {
             THandler handler;
 

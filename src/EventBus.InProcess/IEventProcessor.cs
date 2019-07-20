@@ -7,7 +7,7 @@ namespace EventBus.InProcess
 {
     public interface IEventProcessor
     {
-        Task ProcessEventAsync<T>(T @event, IEnumerable<Type> hadlersTypes, IServiceFactory serviceFactory, CancellationToken cancellationToken)
+        Task ProcessEventAsync<T>(T @event, IEnumerable<Type> hadlersTypes, IHandlerProvider handlerProvider, CancellationToken cancellationToken)
             where T : IntegrationEvent;
     }
 }

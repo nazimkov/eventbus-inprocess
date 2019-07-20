@@ -1,7 +1,4 @@
-using EventBus.InProcess.Internals;
 using EventBus.InProcess.Internals.Channels;
-using EventBus.InProcess.Tests.Mocks;
-using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -13,13 +10,15 @@ namespace EventBus.InProcess.Tests
     {
         private readonly Mock<IEventBusSubscriptionManager> _subManagerMock;
         private readonly Mock<IChanneslManager> _channelsManagerMock;
-        private readonly Mock<IServiceScopeFactory> _scopeFactoryMock;
+        private readonly Mock<IEventProcessor> _eventProcessorMock;
+        private readonly Mock<IHandlerProvider> _handlerProviderMock;
 
         public EventBusInProcessTests()
         {
             _subManagerMock = new Mock<IEventBusSubscriptionManager>();
             _channelsManagerMock = new Mock<IChanneslManager>();
-            _scopeFactoryMock = ServiceScopeFactoryMock.GetMock(new Dictionary<Type, object>());
+            _eventProcessorMock = new Mock<IEventProcessor>();
+            _handlerProviderMock = new Mock<IHandlerProvider>();
         }
 
         [Theory]
@@ -27,18 +26,19 @@ namespace EventBus.InProcess.Tests
         public void Ctor_OneOfParameterIsNull_ThrowsArgumentNullException(
             IEventBusSubscriptionManager subsManager,
             IChanneslManager channelManager,
-            IServiceScopeFactory scopeFactory)
+            IEventProcessor eventProcessor,
+            IHandlerProvider handlerProvider)
         {
             // Act
             // Assert
-            Assert.Throws<ArgumentNullException>(() => new EventBusInProcess(subsManager, channelManager, scopeFactory));
+            Assert.Throws<ArgumentNullException>(() => new ProtectedExposedEventBus(subsManager, channelManager, eventProcessor, handlerProvider));
         }
 
         [Fact]
         public void Ctor_AllParametersPassed_InstanceCreated()
         {
             // Act
-            var bus = new EventBusInProcess(_subManagerMock.Object, _channelsManagerMock.Object, _scopeFactoryMock.Object);
+            var bus = new ProtectedExposedEventBus(_subManagerMock.Object, _channelsManagerMock.Object, _eventProcessorMock.Object, _handlerProviderMock.Object);
 
             // Assert
             Assert.NotNull(bus);
@@ -48,11 +48,25 @@ namespace EventBus.InProcess.Tests
         {
             var subManagerEmpty = new Mock<IEventBusSubscriptionManager>().Object;
             var channelManagerEmpty = new Mock<IChanneslManager>().Object;
-            var scopeFactoryEmpty = new Mock<IServiceScopeFactory>().Object;
+            var eventProcessorEmpty = new Mock<IEventProcessor>().Object;
+            var scopeFactoryEmpty = new Mock<IHandlerProvider>().Object;
 
-            yield return new object[] { null, channelManagerEmpty, scopeFactoryEmpty };
-            yield return new object[] { subManagerEmpty, null, scopeFactoryEmpty };
-            yield return new object[] { subManagerEmpty, channelManagerEmpty, null };
+            yield return new object[] { null, channelManagerEmpty, eventProcessorEmpty, scopeFactoryEmpty };
+            yield return new object[] { subManagerEmpty, null, eventProcessorEmpty, scopeFactoryEmpty };
+            yield return new object[] { subManagerEmpty, channelManagerEmpty, null, scopeFactoryEmpty };
+            yield return new object[] { subManagerEmpty, channelManagerEmpty, eventProcessorEmpty, null };
+        }
+
+        public class ProtectedExposedEventBus : EventBusInProcess
+        {
+            public ProtectedExposedEventBus(
+                IEventBusSubscriptionManager subsManager,
+                IChanneslManager channelManager,
+                IEventProcessor eventProcessor,
+                IHandlerProvider handlerProvider)
+                : base(subsManager, channelManager, eventProcessor, handlerProvider)
+            {
+            }
         }
     }
 }

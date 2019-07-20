@@ -8,7 +8,7 @@ namespace EventBus.InProcess.Internals
     {
         public abstract Task HandleAsync(
             TIntegrationEvent @event,
-            IServiceFactory serviceFactory,
+            IHandlerProvider serviceFactory,
             CancellationToken cancellationToken = default);
     }
 }

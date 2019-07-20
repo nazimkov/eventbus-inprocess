@@ -7,13 +7,13 @@ namespace EventBus.InProcess.Tests.Integration
 {
     public class EventBusInProcessTests
     {
-        private readonly DelegateServiceFactory _serviceFactory;
+        private readonly DelegateHandlerProvider _handlerProvider;
         private readonly EventBusInProcess _bus;
 
         public EventBusInProcessTests()
         {
-            _serviceFactory = new DelegateServiceFactory();
-            _bus = new EventBusInProcess(_serviceFactory);
+            _handlerProvider = new DelegateHandlerProvider();
+            _bus = new EventBusInProcess(_handlerProvider);
         }
 
         [Fact]
@@ -23,7 +23,7 @@ namespace EventBus.InProcess.Tests.Integration
             TestEvent receivedEvent = null;
             var sendedEvent = new TestEvent();
             var pause = new ManualResetEvent(false);
-            _serviceFactory.AddHandlerBuilder(
+            _handlerProvider.AddHandlerBuilder(
                 typeof(TestEventHandler),
                 () => new TestEventHandler(e => { receivedEvent = e; pause.Set(); }));
 
@@ -44,10 +44,10 @@ namespace EventBus.InProcess.Tests.Integration
             TestEvent receivedEvent = null;
             var sendedEvent = new TestEvent();
             var (pauseFirst, pauseSecond) = (new ManualResetEvent(false), new ManualResetEvent(false));
-            _serviceFactory.AddHandlerBuilder(
+            _handlerProvider.AddHandlerBuilder(
                 typeof(TestEventHandler),
                 () => new TestEventHandler(e => { receivedEvent = e; pauseFirst.Set(); }));
-            _serviceFactory.AddHandlerBuilder(
+            _handlerProvider.AddHandlerBuilder(
                 typeof(SecondTestEventHandler),
                 () => new SecondTestEventHandler(e => { receivedEvent = e; pauseSecond.Set(); }));
 

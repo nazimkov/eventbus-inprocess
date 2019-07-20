@@ -7,7 +7,7 @@ namespace EventBus.InProcess.Internals
 {
     internal class DefaultEventProcessor : IEventProcessor
     {
-        public async Task ProcessEventAsync<T>(T @event, IEnumerable<Type> hadlersTypes, IServiceFactory serviceFactory, CancellationToken cancellationToken)
+        public async Task ProcessEventAsync<T>(T @event, IEnumerable<Type> hadlersTypes, IHandlerProvider serviceFactory, CancellationToken cancellationToken)
             where T : IntegrationEvent
         {
             foreach (var handlerType in hadlersTypes)

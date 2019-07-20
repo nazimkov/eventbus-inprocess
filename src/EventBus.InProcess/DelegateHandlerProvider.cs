@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 
 namespace EventBus.InProcess
 {
-    public sealed class DelegateServiceFactory : IServiceFactory
+    public sealed class DelegateHandlerProvider : IHandlerProvider
     {
         private readonly ConcurrentDictionary<Type, object> _handlers = new ConcurrentDictionary<Type, object>();
         private readonly ConcurrentDictionary<Type, HandlerBuilder> _handlerBuilders = new ConcurrentDictionary<Type, HandlerBuilder>();
@@ -11,6 +11,11 @@ namespace EventBus.InProcess
         public void AddHandlerBuilder(Type type, HandlerBuilder builder)
         {
             _handlerBuilders.TryAdd(type, builder);
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
 
         public THandler GetInstance<THandler>() => (THandler)GetInstance(typeof(THandler));

@@ -14,13 +14,14 @@ namespace EventBus.InProcess
         private readonly IEventBusSubscriptionManager _subsManager;
         private readonly IChanneslManager _channelManager;
         private readonly IEventProcessor _eventProcessor;
+        private readonly IHandlerProvider _handlerProvider;
         private readonly CancellationTokenSource _cts;
 
-        public EventBusInProcess(
+        protected EventBusInProcess(
             IEventBusSubscriptionManager subsManager,
             IChanneslManager channelManager,
             IEventProcessor eventProcessor,
-            IServiceFactory seviceFactory)
+            IHandlerProvider handlerProvider)
         {
             _subsManager = subsManager ??
                 throw new ArgumentNullException(nameof(subsManager));
@@ -28,20 +29,19 @@ namespace EventBus.InProcess
                 throw new ArgumentNullException(nameof(subsManager));
             _eventProcessor = eventProcessor ??
                 throw new ArgumentNullException(nameof(eventProcessor));
-            _seviceFactory = seviceFactory ??
-                throw new ArgumentNullException(nameof(seviceFactory));
+            _handlerProvider = handlerProvider ??
+                throw new ArgumentNullException(nameof(handlerProvider));
             _cts = new CancellationTokenSource();
-            
         }
 
-        public EventBusInProcess(IServiceFactory seviceFactory)
+        public EventBusInProcess(IHandlerProvider handlerProvider)
         {
             _subsManager = new InMemorySubscriptionManager();
             _channelManager = new ThreadChanelsManager();
             _eventProcessor = new DefaultEventProcessor();
-            _seviceFactory = seviceFactory;
+            _handlerProvider = handlerProvider ??
+                throw new ArgumentNullException(nameof(handlerProvider));
             _cts = new CancellationTokenSource();
-
         }
 
         public void Publish<T>(T @event) where T : IntegrationEvent
@@ -79,14 +79,13 @@ namespace EventBus.InProcess
             if (_subsManager.HasSubscriptionsForEvent<T>())
             {
                 var handlersTypes = _subsManager.GetHandlersForEvent<T>();
-                await _eventProcessor.ProcessEventAsync(@event, handlersTypes, _seviceFactory, _cts.Token);
+                await _eventProcessor.ProcessEventAsync(@event, handlersTypes, _handlerProvider, _cts.Token);
             }
         }
 
         #region IDisposable Support
 
         private bool disposedValue = false; // To detect redundant calls
-        private readonly IServiceFactory _seviceFactory;
 
         protected virtual void Dispose(bool disposing)
         {

@@ -15,9 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.InProcess.Tests.Co
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{478F2C9E-1135-4626-A990-875223FE3139}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus.InProcess.DependencyInjection", "src\EventBus.InProcess.DependencyInjection\EventBus.InProcess.DependencyInjection.csproj", "{209633A3-ABE9-468B-9DA9-62173132102A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.InProcess.DependencyInjection", "src\EventBus.InProcess.DependencyInjection\EventBus.InProcess.DependencyInjection.csproj", "{209633A3-ABE9-468B-9DA9-62173132102A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Benchmarks", "Benchmarks", "{2FB2D78F-4646-4CA9-892D-B648185C4F8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventBus.InProcess.DependencyInjection.Tests", "EventBus.InProcess.DependencyInjection.Tests\EventBus.InProcess.DependencyInjection.Tests.csproj", "{DE5DACFE-F27D-440E-A3FE-BE119A70B807}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +51,10 @@ Global
 		{209633A3-ABE9-468B-9DA9-62173132102A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{209633A3-ABE9-468B-9DA9-62173132102A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{209633A3-ABE9-468B-9DA9-62173132102A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE5DACFE-F27D-440E-A3FE-BE119A70B807}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE5DACFE-F27D-440E-A3FE-BE119A70B807}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE5DACFE-F27D-440E-A3FE-BE119A70B807}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE5DACFE-F27D-440E-A3FE-BE119A70B807}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -58,6 +64,7 @@ Global
 		{FFF39D4B-26BA-4A95-B4ED-8512D7D862EA} = {2FB2D78F-4646-4CA9-892D-B648185C4F8E}
 		{4461908A-F26F-432F-A138-3FA430C6DAD8} = {478F2C9E-1135-4626-A990-875223FE3139}
 		{CC6B139A-BF55-476E-BF24-56323B1A43E0} = {478F2C9E-1135-4626-A990-875223FE3139}
+		{DE5DACFE-F27D-440E-A3FE-BE119A70B807} = {478F2C9E-1135-4626-A990-875223FE3139}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A40AB4E3-0719-4409-9B41-87BBF1C06E62}

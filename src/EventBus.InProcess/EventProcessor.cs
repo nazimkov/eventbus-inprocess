@@ -6,18 +6,16 @@ using System.Threading.Tasks;
 
 namespace EventBus.InProcess
 {
-
     public class EventProcessor : IEventProcessor
     {
-        public async Task ProcessEventAsync<T>(T @event, IEnumerable<Type> hadlersTypes, IServiceFactory serviceFactory, CancellationToken cancellationToken)
+        public async Task ProcessEventAsync<T>(T @event, IEnumerable<Type> hadlersTypes, IHandlerProvider handlerProvider, CancellationToken cancellationToken)
             where T : IntegrationEvent
         {
             foreach (var handlerType in hadlersTypes)
             {
                 var handler = (IntegrationEventHandlerWrapper<T>)Activator.CreateInstance(typeof(IntegrationEventHandlerWrapperImpl<,>).MakeGenericType(typeof(T), handlerType));
-                await handler.HandleAsync(@event, serviceFactory, cancellationToken);
+                await handler.HandleAsync(@event, handlerProvider, cancellationToken);
             }
         }
-
     }
 }
