@@ -9,7 +9,8 @@ namespace EventBus.InProcess.DependencyInjection
 
         public HandlerProviderDependencyInjection(IServiceProvider serviceProvider)
         {
-            _serviceProvider = serviceProvider;
+            _serviceProvider = serviceProvider 
+                ?? throw new ArgumentNullException(nameof(serviceProvider));
         }
 
         public THandler GetInstance<THandler>()

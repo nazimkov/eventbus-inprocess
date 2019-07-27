@@ -10,8 +10,8 @@ namespace EventBus.InProcess.DependencyInjection
         {
             services.AddSingleton<IEventBusSubscriptionManager, InMemorySubscriptionManager>();
             services.AddSingleton<IChanneslManager, ThreadChanelsManager>();
-            services.AddSingleton<IEventProcessor, EventProcessor>();
-            services.AddSingleton<IEventBus, EventBusInProcess>();
+            services.AddSingleton<IEventBus, EventBusInProcessDependencyInjection>();
+            services.AddSingleton<IHandlerProvider, HandlerProviderDependencyInjection>();
 
             return services;
         }

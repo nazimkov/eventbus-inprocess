@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EventBus.InProcess.Tests.Common\EventBus.InProcess.Tests.Common.csproj" />
+    <ProjectReference Include="..\..\EventBus.InProcess.Tests.Integration.Common\EventBus.InProcess.Tests.Integration.Common.csproj" />
   </ItemGroup>
 
 </Project>

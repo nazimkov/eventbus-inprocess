@@ -1,6 +1,6 @@
 ﻿using EventBus.InProcess.Benchmark.Events;
 using EventBus.InProcess.Benchmark.Handlers;
-using EventBus.InProcess.Internals;
+using EventBus.InProcess.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 

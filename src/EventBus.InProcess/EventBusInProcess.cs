@@ -13,22 +13,18 @@ namespace EventBus.InProcess
     {
         private readonly IEventBusSubscriptionManager _subsManager;
         private readonly IChanneslManager _channelManager;
-        private readonly IEventProcessor _eventProcessor;
         private readonly IHandlerProvider _handlerProvider;
         private readonly CancellationTokenSource _cts;
 
         protected EventBusInProcess(
             IEventBusSubscriptionManager subsManager,
             IChanneslManager channelManager,
-            IEventProcessor eventProcessor,
             IHandlerProvider handlerProvider)
         {
             _subsManager = subsManager ??
                 throw new ArgumentNullException(nameof(subsManager));
             _channelManager = channelManager ??
                 throw new ArgumentNullException(nameof(subsManager));
-            _eventProcessor = eventProcessor ??
-                throw new ArgumentNullException(nameof(eventProcessor));
             _handlerProvider = handlerProvider ??
                 throw new ArgumentNullException(nameof(handlerProvider));
             _cts = new CancellationTokenSource();
@@ -38,7 +34,6 @@ namespace EventBus.InProcess
         {
             _subsManager = new InMemorySubscriptionManager();
             _channelManager = new ThreadChanelsManager();
-            _eventProcessor = new DefaultEventProcessor();
             _handlerProvider = handlerProvider ??
                 throw new ArgumentNullException(nameof(handlerProvider));
             _cts = new CancellationTokenSource();
@@ -78,8 +73,11 @@ namespace EventBus.InProcess
         {
             if (_subsManager.HasSubscriptionsForEvent<T>())
             {
-                var handlersTypes = _subsManager.GetHandlersForEvent<T>();
-                await _eventProcessor.ProcessEventAsync(@event, handlersTypes, _handlerProvider, _cts.Token);
+                foreach (var handlerType in _subsManager.GetHandlersForEvent<T>())
+                {
+                    var handler = (IntegrationEventHandlerWrapper<T>)Activator.CreateInstance(typeof(IntegrationEventHandlerWrapperImpl<,>).MakeGenericType(typeof(T), handlerType));
+                    await handler.HandleAsync(@event, _handlerProvider, _cts.Token);
+                }
             }
         }
 

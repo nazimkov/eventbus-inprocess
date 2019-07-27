@@ -9,10 +9,11 @@
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.11.5" />
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.3.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\EventBus.InProcess\EventBus.InProcess.csproj" />
+    <ProjectReference Include="..\..\src\EventBus.InProcess.DependencyInjection\EventBus.InProcess.DependencyInjection.csproj" />
   </ItemGroup>
 
 </Project>

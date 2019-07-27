@@ -1,14 +1,14 @@
-using EventBus.InProcess.Tests.Common.Data;
-using System.Threading;
+using EventBus.InProcess.Tests.Integration.Common;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace EventBus.InProcess.Tests.Integration
 {
-    public class EventBusInProcessTests
+    public class EventBusInProcessTests : EventBusInProcessIntegrationTests
     {
-        private readonly DelegateHandlerProvider _handlerProvider;
         private readonly EventBusInProcess _bus;
+        private readonly DelegateHandlerProvider _handlerProvider;
 
         public EventBusInProcessTests()
         {
@@ -19,59 +19,18 @@ namespace EventBus.InProcess.Tests.Integration
         [Fact]
         public async Task PublishAsync_EventWithHandler_HandlerReceivesEvent()
         {
-            // Arrange
-            TestEvent receivedEvent = null;
-            var sendedEvent = new TestEvent();
-            var pause = new ManualResetEvent(false);
-            _handlerProvider.AddHandlerBuilder(
-                typeof(TestEventHandler),
-                () => new TestEventHandler(e => { receivedEvent = e; pause.Set(); }));
-
-            // Act
-            _bus.Subscribe<TestEvent, TestEventHandler>();
-            await _bus.PublishAsync(sendedEvent);
-
-            // Assert
-            AssertEventReceived(pause);
-            Assert.NotNull(receivedEvent);
-            AssertEventsEqual(sendedEvent, receivedEvent);
+            await Test_PublishAsync_EventWithHandler_HandlerReceivesEvent(() => _bus);
         }
 
         [Fact]
         public async Task PublishAsync_EventWithMultipleHandlers_AllHandlersReceiveEvent()
         {
-            // Arrange
-            TestEvent receivedEvent = null;
-            var sendedEvent = new TestEvent();
-            var (pauseFirst, pauseSecond) = (new ManualResetEvent(false), new ManualResetEvent(false));
-            _handlerProvider.AddHandlerBuilder(
-                typeof(TestEventHandler),
-                () => new TestEventHandler(e => { receivedEvent = e; pauseFirst.Set(); }));
-            _handlerProvider.AddHandlerBuilder(
-                typeof(SecondTestEventHandler),
-                () => new SecondTestEventHandler(e => { receivedEvent = e; pauseSecond.Set(); }));
-
-            // Act
-            _bus.Subscribe<TestEvent, TestEventHandler>();
-            _bus.Subscribe<TestEvent, SecondTestEventHandler>();
-            await _bus.PublishAsync(sendedEvent);
-
-            // Assert
-            AssertEventReceived(pauseFirst);
-            AssertEventReceived(pauseSecond);
-            Assert.NotNull(receivedEvent);
-            AssertEventsEqual(sendedEvent, receivedEvent);
+            await Test_PublishAsync_EventWithMultipleHandlers_AllHandlersReceiveEvent(() => _bus);
         }
 
-        private void AssertEventReceived(ManualResetEvent resetEvent)
+        protected override void AddHandlerBuilder(Type handlerType, HandlerBuilder handlerBuilder = null)
         {
-            Assert.True(resetEvent.WaitOne(100));
-        }
-
-        private void AssertEventsEqual(IntegrationEvent expected, IntegrationEvent given)
-        {
-            Assert.Equal(expected.Id, given.Id);
-            Assert.Equal(expected.CreationDate, given.CreationDate);
+            _handlerProvider.AddHandlerBuilder(handlerType, handlerBuilder);
         }
     }
 }
