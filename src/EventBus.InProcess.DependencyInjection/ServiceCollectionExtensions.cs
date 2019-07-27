@@ -6,6 +6,11 @@ namespace EventBus.InProcess.DependencyInjection
 {
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// Register <see cref="IEventBus"/> and related dependencies implementation
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
         public static IServiceCollection AddEventBus(this IServiceCollection services)
         {
             services.AddSingleton<IEventBusSubscriptionManager, InMemorySubscriptionManager>();

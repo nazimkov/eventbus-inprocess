@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EventBus.InProcess.Tests.Integration.Common\EventBus.InProcess.Tests.Integration.Common.csproj" />
-    <ProjectReference Include="..\src\EventBus.InProcess.DependencyInjection\EventBus.InProcess.DependencyInjection.csproj" />
+    <ProjectReference Include="..\..\src\EventBus.InProcess.DependencyInjection\EventBus.InProcess.DependencyInjection.csproj" />
     <ProjectReference Include="..\EventBus.InProcess.Tests.Common\EventBus.InProcess.Tests.Common.csproj" />
   </ItemGroup>
 
